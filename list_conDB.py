@@ -31,7 +31,7 @@ for o, a in opts:
 api_factory = APIFactory()
 # Call construct_DB_API to get an CDB API instance, the path must lead to a valid config.yml file containing the database configuration
 
-conditionsDB = api_factory.construct_DB_API("/home/eric/snd-soft-23april-2021/sndsw/conditionsDatabase/config.yml")
+conditionsDB = api_factory.construct_DB_API("/home/eric/conditionsDatabase/config.yml")
 
 detector=""
 count=0
@@ -40,9 +40,11 @@ def showdetectors(detector,count,level):
   #print ("showdetectors called. count=",count," level=",level) 
   # Show all detector names in the database:
   result = conditionsDB.list_detectors(detector)
-  if len(result) > 0:
+  for sd in result:
     if detector=="":
-        print ("snd subdetectors:",result)
+        print ("snd subdetectors:",sd)
+        conditions = conditionsDB.get_conditions_by_tag(sd,'Scifi_1')
+        print("conditions of detector",sd," :",conditions)
     else:
         print ("subdetectors inside",detector," :",result)
     if count < level:
@@ -52,7 +54,7 @@ def showdetectors(detector,count,level):
   else:
     print ("No more subdetectors below subdetector/channel:",detector)
   #print ("count=",count,"All subdetectors listed up to level",level,".")
-  return 
+  return
   
 showdetectors(detector,count,level)
 sys.exit()

@@ -13,6 +13,12 @@ from mongoengine import *
 from databases.mongodb.models.detector import Detector
 from databases.mongodb.models.detectorWrapper import DetectorWrapper
 from databases.mongodb.models.condition import Condition
+from databases.mongodb.models.condition import Fill
+from databases.mongodb.models.condition import Run
+from databases.mongodb.models.condition import File
+from databases.mongodb.models.condition import Emulsion
+from databases.mongodb.models.condition import Brick
+
 #from ...interface import APIInterface
 from interface import APIInterface
 
@@ -189,12 +195,12 @@ class MongoToCDBAPIAdapter(APIInterface):
             detector_wrapper = DetectorWrapper.objects().get(name=detector_names[0])
             return detector_wrapper
         except:
-	    #evh
+            #evh
             print ("The detector wrapper ",
                              detector_names[0],
                            " does not exist in the database")
-            pass	     
-	    #raise ValueError("The detector wrapper ",
+            pass
+            # raise ValueError("The detector wrapper ",
             #                 detector_names[0],
             #                 " does not exist in the database")
 
@@ -335,6 +341,231 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         # Convert the internal Detector object to a generic Python dict type
         return loads(detector.to_json())
+
+    # Method signature description can be found in the toplevel interface.py file
+    def list_fills(self, start_date, end_date):
+        fill_list = []
+
+
+        return fill_list
+
+
+    # Method signature description can be found in the toplevel interface.py file
+    #evh to test if a document exists in the db use .objects()
+    def get_fill(self, fill_id):
+        if fill_id == "":
+            raise ValueError("Please specify a valid fill number. A fill number cannot be empty.")
+
+        if not self.__validate_str(fill_id):
+            raise TypeError("Please pass the correct type of input: fill_id "
+                            "should be String")
+
+        fill_id = self.__sanitize_str(fill_id)
+
+        try:
+            fill = self.__get_fill(fill_id)
+        except Exception:
+            raise ValueError("The requested fill " + fill_id + " does not exist.")
+
+        # Convert the internal Fill object to a generic Python dict type
+        return loads(fill.to_json())
+
+    # Method signature description can be found in the toplevel interface.py file
+    if 1==0:
+      def get_run(self, run_id):
+        if run_id == "":
+            raise ValueError("Please specify a valid run number. A run number cannot be empty.")
+
+        if not self.__validate_str(run_id):
+            raise TypeError("Please pass the correct type of input: run_id "
+                            "should be String")
+
+        run_id = self.__sanitize_str(run_id)
+
+        try:
+            run = self.__get_run(run_id)
+        except Exception:
+            raise ValueError("The requested run " + run_id + " does not exist.")
+
+        # Convert the internal Run object to a generic Python dict type
+        return loads(run.to_json())
+
+      # Method signature description can be found in the toplevel interface.py file
+      def get_file(self, file_id):
+        if file_id == "":
+            raise ValueError("Please specify a valid file number. A file number cannot be empty.")
+
+        if not self.__validate_str(file_id):
+            raise TypeError("Please pass the correct type of input: file_id "
+                            "should be String")
+
+        file_id = self.__sanitize_str(file_id)
+
+        try:
+            file = self.__get_file(file_id)
+        except Exception:
+            raise ValueError("The requested file" + file_id + " does not exist.")
+
+        # Convert the internal File object to a generic Python dict type
+        return loads(file.to_json())
+
+
+      # Method signature description can be found in the toplevel interface.py file
+      def get_emulsion(self, emulsion_id):
+        if emulsion_id == "":
+            raise ValueError("Please specify a valid emulsion number. An emulsion number cannot be empty.")
+
+        if not self.__validate_str(emulsion_id):
+            raise TypeError("Please pass the correct type of input: emulsion_id "
+                            "should be String")
+
+        emulsion_id = self.__sanitize_str(emulsion_id)
+
+        try:
+            emulsion = self.__get_file(emulsion_id)
+        except Exception:
+            raise ValueError("The requested emulsion" + emulsion_id + " does not exist.")
+
+        # Convert the internal Emulsion object to a generic Python dict type
+        return loads(emulsion.to_json())
+
+      # Method signature description can be found in the toplevel interface.py file
+      def get_brick(self, brick_id):
+        if brick_id == "":
+            raise ValueError("Please specify a valid brick number. A brick number cannot be empty.")
+
+        if not self.__validate_str(brick_id):
+            raise TypeError("Please pass the correct type of input: brick_id "
+                            "should be String")
+
+        brick_id = self.__sanitize_str(brick_id)
+
+        try:
+            brick = self.__get_file(brick_id)
+        except Exception:
+            raise ValueError("The requested brick" + brick_id + " does not exist.")
+
+        # Convert the internal Brick object to a generic Python dict type
+        return loads(brick.to_json())
+
+    # Method signature description can be found in the toplevel interface.py file
+    def add_fill(self, fill_id, start_time, end_time):
+        if fill_id == "" :
+            raise TypeError("Fill_id should not be empty")
+
+        # Converting all dates given as a String to a datetime object
+        if self.__validate_str(start_time):
+            start_time = self.__convert_date(start_time)
+        elif self.__validate_datetime(valid_until):
+            # Strip off the microseconds
+            start_time = start_time.replace(microsecond=0)
+        if self.__validate_str(end_time):
+            end_time = self.__convert_date(end_time)
+        elif self.__validate_datetime(end_time):
+            # Strip off the microseconds
+            end_time = end_time.replace(microsecond=0)
+
+        if start_time > end_time:
+            raise ValueError("Incorrect validity interval")
+
+        fill = Fill()
+        fill.fill_id = fill_id
+        fill.start_time = start_time
+        fill.end_time = end_time
+        fill.save()
+        return
+
+    # Method signature description can be found in the toplevel interface.py file
+    if 1==0:
+      def add_run(self, run_id, fill_id, start_time, end_time):
+        if run_id == "" or fill_id == "" :
+            raise TypeError("Run_id or Fill_id should not be empty")
+
+        # Converting all dates given as a String to a datetime object
+        if self.__validate_str(start_time):
+            start_time = self.__convert_date(start_time)
+        elif self.__validate_datetime(valid_until):
+            # Strip off the microseconds
+            start_time = start_time.replace(microsecond=0)
+        if self.__validate_str(end_time):
+            end_time = self.__convert_date(end_time)
+        elif self.__validate_datetime(end_time):
+            # Strip off the microseconds
+            end_time = end_time.replace(microsecond=0)
+
+        if start_time > end_time:
+            raise ValueError("Incorrect validity interval")
+
+        run = Run()
+    run.run_id = run_id
+    if get_fill(fill_id) == "":
+            raise TypeError("Fill_id "+fill_id+" does not exist.")
+
+        run.fill_id = fill_id
+        run.start_time = start_time
+        run.end_time = end_time
+        run.save()
+        return
+
+      # Method signature description can be found in the toplevel interface.py file
+      def add_file(self, run_id, file_id, start_time, end_time):
+        if run_id == "" or file_id == "" :
+            raise TypeError("Run_id or File_id should not be empty")
+
+        # Converting all dates given as a String to a datetime object
+        if self.__validate_str(start_time):
+            start_time = self.__convert_date(start_time)
+        elif self.__validate_datetime(valid_until):
+            # Strip off the microseconds
+            start_time = start_time.replace(microsecond=0)
+        if self.__validate_str(end_time):
+            end_time = self.__convert_date(end_time)
+        elif self.__validate_datetime(end_time):
+            # Strip off the microseconds
+            end_time = end_time.replace(microsecond=0)
+
+        if start_time > end_time:
+            raise ValueError("Incorrect validity interval")
+
+        file = File()
+    file.file_id = file_id
+
+    if get_run(run_id) == "":
+            raise TypeError("Run_id "+run_id+" does not exist.")
+
+        file.run_id = run_id
+
+    if get_run(fill_id) == "":
+            raise TypeError("Fill_id "+fill_id+" does not exist.")
+
+        file.fill_id = fill_id
+        file.start_time = start_time
+        file.end_time = end_time
+        file.save()
+        return
+
+      # Method signature description can be found in the toplevel interface.py file
+    def remove_fill(self, fill_id):
+        if not self.__validate_str(fill_id):
+            raise TypeError("Please pass the correct type of input: fill_id should be String")
+
+        if fill_id == "":
+            raise ValueError("Please provide the correct input for fill_id: fill_id "
+                             "cannot be an empty String")
+
+
+        try:
+            fill = self.__get_fill(fill_id)
+	    fill.remove()
+        except Exception:
+            #evh
+            print ("The Fill '",
+                             fill_id,
+                             "' does not exist in the database")
+            pass
+
+
+
 
     # Method signature description can be found in the toplevel interface.py file
     def add_detector(self, name, parent_id=None):

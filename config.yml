@@ -1,7 +1,7 @@
 db_type: mongo
 mongo:
-  db_name: conditionsDB
+  db_name: sndrundb
   host: localhost
-  password: ""
+  password: "sndrundb"
   port: 27017
-  user: ""
+  user: "evh"

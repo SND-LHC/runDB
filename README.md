@@ -1,5 +1,49 @@
 # conditionsDB package
 
+#on client machines (ubuntu)
+pip install mongoengine
+
+#to access the conditions database on ship-cc8.cern.ch:
+1. Make an .ssh key on your (local, ie outside the cern.ch domain) machine using the command: "ssh-keygen -t rsa"; giva an empty passphrase).
+2. Copy the id_rsa.pub key to your .ssh directory on lxplus.
+3. Edit the ~/.ssh/config file on your local machine to define a tunnel (create it if it doesnt exist):
+
+Host sndtun
+  Hostname lxplus.cern.ch
+  User your_lxplus_userid
+  LocalForward 27017 sndrundb.cern.ch:27017
+Host sndrundb
+  Hostname localhost
+  Port 27017
+
+4. Edit the file conditionsDatabase/config.yml:
+
+db_type: mongo
+mongo:
+  db_name: sndrundb
+  host: localhost
+  password: "sndrundb"
+  port: 27017
+  user: "sndatlhc"
+
+5. Start the tunnel with the command: "ssh -N -f -q sndtun"
+
+6. It might be necessary to install kinit and do a kinit userid@lxplus.cern.ch before starting the tunnel.
+
+# to add the geometry to the db from geofile_full.conical.Pythia8-TGeant4.root:
+1. export FAIRSHIP_ROOT=$SNDSW_ROOT
+2. make a geometry file with run_simScript.py
+3. python conditionsDatabase/snd_condDB.py (takes appr. mins)
+
+# to list the detectors in the database:
+
+python list_conDB.py -l n, where n is the desired level.
+
+# to add external dictionaries with conditions data to the database (for the SciFi)
+
+python scifi_conDB.py
+
+
 ## Introduction
 
 This package provides functionality to communicate with a conditions database (CDB) storage back-end.
@@ -10,6 +54,14 @@ storage back-end.
 Currently, the following storage back-ends are supported:
 
 * MongoDB
+Installation on separate linux (centos) machine: follow instructions from https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/
+On ship-cc8.cern.ch, userid=evh, pwd=sndAtLHC need sudo privileges
+sudo systemctl stop mongod
+sudo vi /etc/mongod.conf: bindIp: 0.0.0.0 (tells mongo to listen to outside IPs)
+sudo firewall-cmd --permanent --add-port 27017/tcp (opens mongo's listening port to the firewall)
+sudo firewall-cmd --reload (reload the firewall)
+sudo netstat -tunlp (check that the port 27017 is open to tcp)
+sudo systemctl start mongod
 
 ## Package structure
 

@@ -1,7 +1,7 @@
 db_type: oracle
 mongo:
   db_name: conditionsDB
-  host: localhost
+  host: ship-cc8.cern.ch
   password: ""
   port: 27017
   user: ""
