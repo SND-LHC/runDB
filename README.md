@@ -1,13 +1,18 @@
 # conditionsDB package
 
-#on client machines (ubuntu)
-pip install mongoengine
+## Quickstart
 
-#to access the conditions database on ship-cc8.cern.ch:
-1. Make an .ssh key on your (local, ie outside the cern.ch domain) machine using the command: "ssh-keygen -t rsa"; giva an empty passphrase).
+### Prerequisite on client machines (ubuntu)
+
+`pip install mongoengine`
+
+### To access the conditions database on sndrundb.cern.ch:
+
+1. Make an .ssh key on your (local, ie outside the cern.ch domain) machine using the command: `ssh-keygen -t rsa`; giva an empty passphrase).
 2. Copy the id_rsa.pub key to your .ssh directory on lxplus.
-3. Edit the ~/.ssh/config file on your local machine to define a tunnel (create it if it doesnt exist):
+3. Edit the ~/.ssh/config file on your local machine to define a tunnel (create it if it doesn't exist):
 
+``` ssh-config
 Host sndtun
   Hostname lxplus.cern.ch
   User your_lxplus_userid
@@ -15,9 +20,11 @@ Host sndtun
 Host sndrundb
   Hostname localhost
   Port 27017
+```
 
 4. Edit the file conditionsDatabase/config.yml:
 
+``` yaml
 db_type: mongo
 mongo:
   db_name: sndrundb
@@ -25,24 +32,25 @@ mongo:
   password: "sndrundb"
   port: 27017
   user: "sndatlhc"
+```
 
-5. Start the tunnel with the command: "ssh -N -f -q sndtun"
+5. Start the tunnel with the command: `ssh -N -f -q sndtun`
 
-6. It might be necessary to install kinit and do a kinit userid@lxplus.cern.ch before starting the tunnel.
+6. It might be necessary to install kinit and do a `kinit userid@lxplus.cern.ch` before starting the tunnel.
 
-# to add the geometry to the db from geofile_full.conical.Pythia8-TGeant4.root:
-1. export FAIRSHIP_ROOT=$SNDSW_ROOT
+### To add the geometry to the db from geofile_full.conical.Pythia8-TGeant4.root:
+
+1. `export FAIRSHIP_ROOT=$SNDSW_ROOT`
 2. make a geometry file with run_simScript.py
-3. python conditionsDatabase/snd_condDB.py (takes appr. mins)
+3. `python conditionsDatabase/snd_condDB.py` (takes appr. mins)
 
-# to list the detectors in the database:
+### To list the detectors in the database:
 
-python list_conDB.py -l n, where n is the desired level.
+`python list_conDB.py -l n`, where n is the desired level.
 
-# to add external dictionaries with conditions data to the database (for the SciFi)
+### To add external dictionaries with conditions data to the database (for the SciFi)
 
-python scifi_conDB.py
-
+`python scifi_conDB.py`
 
 ## Introduction
 
@@ -54,14 +62,17 @@ storage back-end.
 Currently, the following storage back-ends are supported:
 
 * MongoDB
+
 Installation on separate linux (centos) machine: follow instructions from https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/
-On ship-cc8.cern.ch, userid=evh, pwd=sndAtLHC need sudo privileges
+
+```bash
 sudo systemctl stop mongod
-sudo vi /etc/mongod.conf: bindIp: 0.0.0.0 (tells mongo to listen to outside IPs)
-sudo firewall-cmd --permanent --add-port 27017/tcp (opens mongo's listening port to the firewall)
-sudo firewall-cmd --reload (reload the firewall)
-sudo netstat -tunlp (check that the port 27017 is open to tcp)
+sudo vi /etc/mongod.conf: bindIp: 0.0.0.0 # (tells mongo to listen to outside IPs)
+sudo firewall-cmd --permanent --add-port 27017/tcp # (opens mongo's listening port to the firewall)
+sudo firewall-cmd --reload # (reload the firewall)
+sudo netstat -tunlp # (check that the port 27017 is open to tcp)
 sudo systemctl start mongod
+```
 
 ## Package structure
 
@@ -94,11 +105,11 @@ Most of the FairSHiP users rely on the automatic building tool aliBuild (http://
 ## Documentation generation
 For the generation of an API reference manual we use the documentation generator Doxygen. Configuration for Doxygen can be found in the `Doxyfile`. In order to (re)generate the documentation, you should first install Doxygen. Then inside the package's root folder ("conditionsDatabase") you will be able to find the Doxyfile, which is currently configured for the project. The commands that you should run are the following:
 
-doxygen Doxyfile ---> produces the latex and html files for the reference manual.
+`doxygen Doxyfile` ---> produces the latex and html files for the reference manual.
 
-cd docs/latex 	 ---> Inside this folder there is a makefile, which will produce the pdf.
+`cd docs/latex` 	 ---> Inside this folder there is a makefile, which will produce the pdf.
 
-make pdf	 ---> Produces the pdf. The name of the file will be "refman.pdf".
+`make pdf`	 ---> Produces the pdf. The name of the file will be "refman.pdf".
 
 ## Supported Python version
 This package is developed to work with Python 2. However, wherever possible we tried to use constructs that are compatible with both Python 2 and 3. Also, whenever relevant we documented the code with updates that can be applied when porting to Python 3.
