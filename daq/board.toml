@@ -1,0 +1,17 @@
+[board]
+populated_slots = [0]
+clock_40_phase = 0
+ttcrx_calibrated = false
+
+[[fe]]
+fe_id = 0
+lsb_thr_t1 = 59
+lsb_thr_t2 = 50
+lsb_thr_e = 50
+
+[[fe]]
+fe_id = 1
+lsb_thr_t1 = 59
+lsb_thr_t2 = 50
+lsb_thr_e = 50
+
