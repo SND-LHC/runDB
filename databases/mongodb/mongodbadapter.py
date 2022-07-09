@@ -54,14 +54,15 @@ class MongoToCDBAPIAdapter(APIInterface):
         #evh added printout
         #print ('***********')
         #print ("db=",connection_dict['db_name']," username=",connection_dict['user']," host=",connection_dict['host'])
-        #print ('***********')       
-        return connect(
-            db=connection_dict['db_name'],
-            username=connection_dict['user'],
-            password=connection_dict['password'],
-            host=connection_dict['host'],
-            port=connection_dict['port']
-        )
+        #print ('***********')
+        user = connection_dict['user']
+        password = connection_dict['password']
+        db = connection_dict['db_name']
+        host = connection_dict['host']
+        port = connection_dict['port']
+        # For some reason authentication only works using URI
+        uri = f"mongodb://{user}:{password}@{host}:{port}/{db}"
+        return connect(host=uri)
 
     def __delete_db(self, db_name):
         """

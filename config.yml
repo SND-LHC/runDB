@@ -2,6 +2,6 @@ db_type: mongo
 mongo:
   db_name: sndrundb
   host: localhost
-  password: "sndrundb"
+  password: sndrundb
   port: 27017
-  user: "evh"
+  user: sndatlhc
