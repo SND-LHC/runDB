@@ -1,7 +1,7 @@
 """ Contains a Mongo Engine model definition for a File. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
 #evh
-from databases.mongodb.models.condition import Attribute
+from databases.mongodb.models.attribute import Attribute
 
 
 ## This model represents a file. A file is associated with zero

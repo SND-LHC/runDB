@@ -1,7 +1,7 @@
 """ Contains a Mongo Engine model definition for a Brick. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
 #evh
-from databases.mongodb.models.condition import Attribute
+from databases.mongodb.models.attribute import Attribute
 
 
 ## This model represents a brick. An brick is associated with zero
@@ -14,7 +14,7 @@ from databases.mongodb.models.condition import Attribute
 #  @property start_time:      (datetime) The date/time defining the start of the brick configuration.
 #  @property end_time:        (datetime) The date/time defining the end of the brick configuration.
 
-class Emulsion(EmbeddedDocument):
+class Brick(EmbeddedDocument):
     brick_id = StringField(max_length=1000, required=True)
     emulsion_id = StringField(max_length=1000, required=True)
     attributes = EmbeddedDocumentListField(Attribute)

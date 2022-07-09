@@ -1,7 +1,7 @@
 """ Contains a Mongo Engine model definition for an Emulsion. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
 #evh
-from databases.mongodb.models.condition import Attribute
+from databases.mongodb.models.attribute import Attribute
 
 
 ## This model represents an emulsion (target) configuration. An emulsion is associated with zero

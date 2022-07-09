@@ -1,7 +1,7 @@
 """ Contains a Mongo Engine model definition for a Run. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
 #evh
-from databases.mongodb.models.condition import Attribute
+from databases.mongodb.models.attribute import Attribute
 
 
 ## This model represents a run. A run is associated with zero

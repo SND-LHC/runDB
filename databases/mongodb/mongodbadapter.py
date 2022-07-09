@@ -13,11 +13,11 @@ from mongoengine import *
 from databases.mongodb.models.detector import Detector
 from databases.mongodb.models.detectorWrapper import DetectorWrapper
 from databases.mongodb.models.condition import Condition
-from databases.mongodb.models.condition import Fill
-from databases.mongodb.models.condition import Run
-from databases.mongodb.models.condition import File
-from databases.mongodb.models.condition import Emulsion
-from databases.mongodb.models.condition import Brick
+from databases.mongodb.models.fill import Fill
+from databases.mongodb.models.run import Run
+from databases.mongodb.models.file import File
+from databases.mongodb.models.emulsion import Emulsion
+from databases.mongodb.models.brick import Brick
 
 #from ...interface import APIInterface
 from interface import APIInterface

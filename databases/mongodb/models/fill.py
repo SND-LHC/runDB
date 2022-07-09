@@ -1,7 +1,7 @@
 """ Contains a Mongo Engine model definition for a Fill. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField
+from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
 #evh
-from databases.mongodb.models.condition import Attribute
+from databases.mongodb.models.attribute import Attribute
 
 
 ## This model represents a fill. A fill is associated with zero
