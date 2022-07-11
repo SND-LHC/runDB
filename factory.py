@@ -6,13 +6,13 @@ import yaml
 ## As of Python 3.8 we can do more with typing. It is recommended to make
 ## the factory class final. Use the following import and provided
 ## decorator for the class.
-# from typing import final
+from typing import final
 
 from databases.mongodb.mongodbadapter import MongoToCDBAPIAdapter
 
 
 ### This class creates an instance of the specified database API.
-# TODO uncomment for python >= 3.8: @final
+@final
 class APIFactory:
     def __init__(self):
         # supported_db_types is the list of different database back-ends which are supported
@@ -41,8 +41,7 @@ class APIFactory:
         if db_type == "mongo":
             return MongoToCDBAPIAdapter(connection_dict)
         # FUTURE: Add more storage back-ends here
-        else:
-            raise NotImplementedError(db_type + " database is not supported")
+        raise NotImplementedError(db_type + " database is not supported")
 
     ### Loads the configuration from the config file, including the database type and also
     # the connection information.

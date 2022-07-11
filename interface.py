@@ -5,7 +5,7 @@ from datetime import datetime
 ## As of Python 3.8 we can do more with typing. It is recommended to make
 ## the API interface class final. Use the following import and provided
 ## decorator for the class.
-# from typing import final
+from typing import final
 
 
 # Package metadata
@@ -17,12 +17,12 @@ __version__ = "1.0"
 __status__ = "Prototype"
 
 
-_ABC = ABCMeta("ABC", (object,), {"__slots__": ()})  # Compatible with python 2 AND 3
-
 ### Conditions Database Interface definition. This class defines the interface that all
 ### storage back-end adapters must implement.
-# TODO uncomment for python >= 3.8: @final
-class APIInterface(_ABC):  # For Python 3 we could/should use 'metaclass=ABCMeta'
+@final
+class APIInterface(
+    metaclass=ABCMeta
+):  # For Python 3 we could/should use 'metaclass=ABCMeta'
 
     ### Returns a list with fill numbers of all fills in the database.
     #   @param  start_date:     Timestamp specifying a start of a date/time range for which
