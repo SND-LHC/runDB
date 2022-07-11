@@ -1,23 +1,12 @@
-###
-#
-# This is an example file to demonstrate how the conditionsDatabase API works
-###
-from __future__ import print_function, division
+"""
+This is an example file to demonstrate how the conditionsDatabase API works
+"""
+import datetime
 from factory import APIFactory
-import datetime, sys
-
-
-from builtins import range
-import operator
-from argparse import ArgumentParser
-from array import array
-import os, ROOT
 
 # Instantiate an API factory
 api_factory = APIFactory()
-conditionsDB = api_factory.construct_DB_API(
-    "/home/eric/snd-10jan2021/sndsw/conditionsDatabase/config.yml"
-)
+conditionsDB = api_factory.construct_DB_API("config.yml")
 
 conditionsDB.add_detector("SciFi")
 
