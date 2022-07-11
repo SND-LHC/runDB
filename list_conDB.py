@@ -14,7 +14,8 @@ options = parser.parse_args()
 
 # Instantiate an API factory
 api_factory = APIFactory()
-# Call construct_DB_API to get an CDB API instance, the path must lead to a valid config.yml file containing the database configuration
+# Call construct_DB_API to get an CDB API instance, the path must lead to a
+# valid config.yml file containing the database configuration
 
 conditionsDB = api_factory.construct_DB_API("config.yml")
 
@@ -27,19 +28,18 @@ def showdetectors(detector, count, level):
     Show all detector names in the database:
     """
     result = conditionsDB.list_detectors(detector)
-    for sd in result:
+    for sub_detector in result:
         if detector == "":
-            print("snd subdetectors:", sd)
-            conditions = conditionsDB.get_conditions_by_tag(sd, "Scifi_1")
-            print("conditions of detector", sd, " :", conditions)
+            print("snd subdetectors:", sub_detector)
+            conditions = conditionsDB.get_conditions_by_tag(sub_detector, "Scifi_1")
+            print("conditions of detector", sub_detector, " :", conditions)
         else:
             print("subdetectors inside", detector, " :", result)
         if count < level:
             count += 1
-            for j in range(len(result)):
-                showdetectors(result[j], count, level)
-    else:
-        print("No more subdetectors below subdetector/channel:", detector)
+            for sub_det in result:
+                showdetectors(sub_det, count, level)
+    print("No more subdetectors below subdetector/channel:", detector)
 
 
 showdetectors(DETECTOR, COUNT, options.level)
