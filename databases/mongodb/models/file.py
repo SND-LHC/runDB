@@ -1,6 +1,12 @@
 """ Contains a Mongo Engine model definition for a File. """
-from mongoengine import EmbeddedDocument, EmbeddedDocumentListField, StringField, ComplexDateTimeField
-#evh
+from mongoengine import (
+    EmbeddedDocument,
+    EmbeddedDocumentListField,
+    StringField,
+    ComplexDateTimeField,
+)
+
+# evh
 from databases.mongodb.models.attribute import Attribute
 
 
@@ -13,6 +19,7 @@ from databases.mongodb.models.attribute import Attribute
 #  @property attributes:      List of associated Attribute models.
 #  @property start_time:      (datetime) The date/time defining the start of the file.
 #  @property end_time:        (datetime) The date/time defining the end of the file.
+
 
 class File(EmbeddedDocument):
     file_id = StringField(max_length=1000, required=True)

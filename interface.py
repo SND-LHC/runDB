@@ -1,27 +1,28 @@
 """ Conditions Database interface definition. """
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+
 ## As of Python 3.8 we can do more with typing. It is recommended to make
 ## the API interface class final. Use the following import and provided
 ## decorator for the class.
-#from typing import final
+# from typing import final
 
 
 # Package metadata
-__author__    = "Tom Vrancken"
-__email__     = "dev@tomvrancken.nl"
+__author__ = "Tom Vrancken"
+__email__ = "dev@tomvrancken.nl"
 __copyright__ = "TU/e ST2019"
-__credits__   = ["Juan van der Heijden", "Georgios Azis"]
-__version__   = "1.0"
-__status__    = "Prototype"
+__credits__ = ["Juan van der Heijden", "Georgios Azis"]
+__version__ = "1.0"
+__status__ = "Prototype"
 
 
-_ABC = ABCMeta('ABC', (object,), {'__slots__': ()})  # Compatible with python 2 AND 3
+_ABC = ABCMeta("ABC", (object,), {"__slots__": ()})  # Compatible with python 2 AND 3
 
 ### Conditions Database Interface definition. This class defines the interface that all
 ### storage back-end adapters must implement.
-#TODO uncomment for python >= 3.8: @final
-class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
+# TODO uncomment for python >= 3.8: @final
+class APIInterface(_ABC):  # For Python 3 we could/should use 'metaclass=ABCMeta'
 
     ### Returns a list with fill numbers of all fills in the database.
     #   @param  start_date:     Timestamp specifying a start of a date/time range for which
@@ -81,10 +82,9 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If fill_id does not exist.
     #   @retval List:           A list with (string) runs
-    #@abstractmethod
-    #def list_runs(self, fill_id=None, start_time=None, end_time=None):
+    # @abstractmethod
+    # def list_runs(self, fill_id=None, start_time=None, end_time=None):
     #    pass
-
 
     ### Returns a run dictionary.
     #   @param  run_id:         String identifying the run to retrieve
@@ -93,8 +93,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @retval Dict:           A dictionary adhering to the following specification:
     #                           Run = { 'Run_number': String, 'Start_time': datetime, 'End_time': datetime,
     #                                        'Attributes': List of Attributes }
-    #@abstractmethod
-    #def get_run(self, run_id):
+    # @abstractmethod
+    # def get_run(self, run_id):
     #    pass
 
     ### Adds a new run to the database.
@@ -108,16 +108,16 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                           Can be of type String or datetime
     #   @throw  TypeError:  If input type is not as specified.
     #   @throw  ValueError:
-    #@abstractmethod
-    #def add_run(self, run_id, fill_id, start_time=None, end_time=None):
+    # @abstractmethod
+    # def add_run(self, run_id, fill_id, start_time=None, end_time=None):
     #    pass
 
     ### Removes a run from the database. Caution:
     #   @param  run_id:        String identifying the run to remove
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If run_id does not exist.
-    #@abstractmethod
-    #def remove_run(self, run_id):
+    # @abstractmethod
+    # def remove_run(self, run_id):
     #    pass
 
     ### Returns a list with the paths of all the files in the database.
@@ -131,10 +131,9 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If fill_id or run_id does not exist.
     #   @retval List:           A list with (string) runs
-    #@abstractmethod
-    #def list_files(self, fill_id=None, run_id=None, start_time=None, end_time=None):
+    # @abstractmethod
+    # def list_files(self, fill_id=None, run_id=None, start_time=None, end_time=None):
     #    pass
-
 
     ### Returns a file dictionary.
     #   @param  file_id:        String identifying the file to retrieve
@@ -143,8 +142,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @retval Dict:           A dictionary adhering to the following specification:
     #                           File = { 'Path': String, 'Start_time': datetime, 'End_time': datetime,
     #                                        'Attributes': List of Attributes }
-    #@abstractmethod
-    #def get_file(self, file_id):
+    # @abstractmethod
+    # def get_file(self, file_id):
     #    pass
 
     ### Adds a new file to the database.
@@ -158,16 +157,16 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                           Can be of type String or datetime
     #   @throw  TypeError:  If input type is not as specified.
     #   @throw  ValueError:
-    #@abstractmethod
-    #def add_file(self, file_id, run_id, start_time=None, end_time=None):
+    # @abstractmethod
+    # def add_file(self, file_id, run_id, start_time=None, end_time=None):
     #    pass
 
     ### Removes a file from the database. Caution:
     #   @param  file_id:        String identifying the file to remove
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If file_id does not exist.
-    #@abstractmethod
-    #def remove_file(self, file_id):
+    # @abstractmethod
+    # def remove_file(self, file_id):
     #    pass
 
     ### Returns a list of all the emulsions in the database.
@@ -179,8 +178,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:
     #   @retval List:           A list with (string) emulsions
-    #@abstractmethod
-    #def list_emulsions(self, start_time=None, end_time=None):
+    # @abstractmethod
+    # def list_emulsions(self, start_time=None, end_time=None):
     #    pass
 
     ### Returns an emulsion dictionary.
@@ -190,8 +189,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @retval Dict:           A dictionary adhering to the following specification:
     #                           File = { 'Emulsion_id': String, 'Start_time': datetime, 'End_time': datetime,
     #                                        'Attributes': List of Attributes }
-    #@abstractmethod
-    #def get_emulsion(self, emulsion_id):
+    # @abstractmethod
+    # def get_emulsion(self, emulsion_id):
     #    pass
 
     ### Adds a new emulsion to the database.
@@ -204,16 +203,16 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                           Can be of type String or datetime
     #   @throw  TypeError:  If input type is not as specified.
     #   @throw  ValueError:
-    #@abstractmethod
-    #def add_emulsion(self, emulsion_id, start_time=None, end_time=None):
+    # @abstractmethod
+    # def add_emulsion(self, emulsion_id, start_time=None, end_time=None):
     #    pass
 
     ### Removes an emulsion from the database. Caution:
     #   @param  emulsion_id:    String identifying the emulsion to remove
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If emulsion_id does not exist.
-    #@abstractmethod
-    #def remove_emulsion(self, emulsion_id):
+    # @abstractmethod
+    # def remove_emulsion(self, emulsion_id):
     #    pass
 
     ### Returns a list of all the bricks in the database emulsion.
@@ -225,8 +224,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:
     #   @retval List:           A list with (string) bricks
-    #@abstractmethod
-    #def list_bricks(self, emulsion_id=None, start_time=None, end_time=None):
+    # @abstractmethod
+    # def list_bricks(self, emulsion_id=None, start_time=None, end_time=None):
     #    pass
 
     ### Returns an brick dictionary.
@@ -236,8 +235,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @retval Dict:           A dictionary adhering to the following specification:
     #                           Brick = { 'Brick_id': String, 'Start_time': datetime, 'End_time': datetime,
     #                                        'Attributes': List of Attributes }
-    #@abstractmethod
-    #def get_brick(self, brick_id):
+    # @abstractmethod
+    # def get_brick(self, brick_id):
     #    pass
 
     ### Adds a new brick to the database.
@@ -251,16 +250,16 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                           Can be of type String or datetime
     #   @throw  TypeError:  If input type is not as specified.
     #   @throw  ValueError:
-    #@abstractmethod
-    #def add_brick(self, brick_id, emulsion_id, start_time=None, end_time=None):
+    # @abstractmethod
+    # def add_brick(self, brick_id, emulsion_id, start_time=None, end_time=None):
     #    pass
 
     ### Removes a brick from the database. Caution:
     #   @param  brick_id:    String identifying the emulsion to remove
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If emulsion_id does not exist.
-    #@abstractmethod
-    #def remove_brick(self, brick_id):
+    # @abstractmethod
+    # def remove_brick(self, brick_id):
     #    pass
 
     ### Adds attributes to a fill.
@@ -274,8 +273,16 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw TypeError:          If input type is not as specified.
     #   @throw ValueError:         If detector_id does not exist.
     @abstractmethod
-    def add_attributes_to_fill(self, fill_id, luminosity=None, filling_scheme=None, energy=None, colliding_bunches=None,
-                      B1=None, B2=None):
+    def add_attributes_to_fill(
+        self,
+        fill_id,
+        luminosity=None,
+        filling_scheme=None,
+        energy=None,
+        colliding_bunches=None,
+        B1=None,
+        B2=None,
+    ):
         pass
 
     ### Adds attributes to a run.
@@ -289,11 +296,10 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @param  eor_status:        Strings specifying status at the end of the run, 'OK'
     #   @throw TypeError:          If input type is not as specified.
     #   @throw ValueError:         If detector_id does not exist.
-    #@abstractmethod
-    #def add_attributes_to_run(self, run_id, luminosity=None, nb_events=None, runtype=None, beam_status=None,
+    # @abstractmethod
+    # def add_attributes_to_run(self, run_id, luminosity=None, nb_events=None, runtype=None, beam_status=None,
     #                  status=None, HV=None, eor_status=None):
     #    pass
-
 
     ### Adds attributes to a file.
     #   @param  file_id:           String identifying the file
@@ -304,18 +310,17 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @param  DQ:                String specifying the data quality flag
     #   @throw TypeError:          If input type is not as specified.
     #   @throw ValueError:         If detector_id does not exist.
-    #@abstractmethod
-    #def add_attributes_to_run(self, file_id, path=None, luminosity=None, nb_events=None, size=None, DQ=None):
+    # @abstractmethod
+    # def add_attributes_to_run(self, file_id, path=None, luminosity=None, nb_events=None, size=None, DQ=None):
     #    pass
-
 
     ### Adds attributes to a emulsion.
     #   @param  emulsion_id:          String identifying the emulsion
     #   @param  target_configuration: String specifying the target configuration
     #   @throw TypeError:          If input type is not as specified.
     #   @throw ValueError:
-    #@abstractmethod
-    #def add_attributes_to_emulsion(self, emulsion_id, target_configuration=None):
+    # @abstractmethod
+    # def add_attributes_to_emulsion(self, emulsion_id, target_configuration=None):
     #    pass
 
     ### Adds attributes to a brick.
@@ -327,8 +332,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @param  scanning_lab:         String specifying the scanning lab
     #   @throw TypeError:             If input type is not as specified.
     #   @throw ValueError:            If emulsion_id does not exist.
-    #@abstractmethod
-    #def add_attributes_to_brick(self, brick_id, emulsion_id=None, producer_id=None, batch_id=None, production_date=None, scanning_lab=None):
+    # @abstractmethod
+    # def add_attributes_to_brick(self, brick_id, emulsion_id=None, producer_id=None, batch_id=None, production_date=None, scanning_lab=None):
     #    pass
 
     ### Returns a list with all attributes dictionaries associated with an object.
@@ -342,8 +347,8 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @retval List:           A list with attributes dictionaries adhering to the following
     #                           specification:
     #                           Attributes = { 'name1': String , 'name2' : String, ...}
-    #@abstractmethod
-    #def get_attributes(self, fill_id=None, run_id=None, file_id=None, emulsion_id=None, brick_id=None):
+    # @abstractmethod
+    # def get_attributes(self, fill_id=None, run_id=None, file_id=None, emulsion_id=None, brick_id=None):
     #    pass
 
     ### Updates the attributes of a specific item
@@ -357,10 +362,9 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                           Attributes = { 'name1': String , 'name2' : String, ...}
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If detector_id does not exist.
-    #@abstractmethod
-    #def update_attributes(self, fill_id=None, run_id=None, file_id=None, emulsion_id=None, brick_id=None, attributes=None)::
+    # @abstractmethod
+    # def update_attributes(self, fill_id=None, run_id=None, file_id=None, emulsion_id=None, brick_id=None, attributes=None)::
     #    pass
-
 
     ### Returns a list with all the detector names in the database.
     #   @param detector_id:     (optional) String identifying the parent detector to
@@ -430,9 +434,17 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw TypeError:       If input type is not as specified.
     #   @throw ValueError:      If detector_id does not exist.
     @abstractmethod
-    def add_condition(self, detector_id, name, tag, values, type=None,
-                      collected_at=datetime.now(), valid_since=datetime.now(),
-                      valid_until=datetime.max):
+    def add_condition(
+        self,
+        detector_id,
+        name,
+        tag,
+        values,
+        type=None,
+        collected_at=datetime.now(),
+        valid_since=datetime.now(),
+        valid_until=datetime.max,
+    ):
         pass
 
     ### Returns a list with all condition dictionaries associated with a detector.
@@ -501,7 +513,9 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                                         'collected_at': datetime, 'valid_since': datetime,
     #                                         'valid_until': datetime, 'values': mixed }
     @abstractmethod
-    def get_conditions_by_name_and_validity(self, detector_id, name, start_date, end_date=None):
+    def get_conditions_by_name_and_validity(
+        self, detector_id, name, start_date, end_date=None
+    ):
         pass
 
     ### Returns a condition dictionary of a specific condition belonging to a detector,
@@ -538,7 +552,9 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #                                         'collected_at': datetime, 'valid_since': datetime,
     #                                         'valid_until': datetime, 'values': mixed }
     @abstractmethod
-    def get_condition_by_name_and_collection_date(self, detector_id, name, collected_at):
+    def get_condition_by_name_and_collection_date(
+        self, detector_id, name, collected_at
+    ):
         pass
 
     ### Updates the type, valid_since and valid_until values of a specific condition
@@ -557,6 +573,7 @@ class APIInterface(_ABC): # For Python 3 we could/should use 'metaclass=ABCMeta'
     #   @throw  TypeError:      If input type is not as specified.
     #   @throw  ValueError:     If detector_id does not exist.
     @abstractmethod
-    def update_condition_by_name_and_tag(self, detector_id, name, tag,
-                                         type=None, valid_since=None, valid_until=None):
+    def update_condition_by_name_and_tag(
+        self, detector_id, name, tag, type=None, valid_since=None, valid_until=None
+    ):
         pass

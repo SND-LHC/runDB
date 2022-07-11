@@ -1,8 +1,13 @@
 """ Contains a Mongo Engine model definition for an Attribute. """
-from mongoengine import EmbeddedDocument, DynamicField, StringField, ComplexDateTimeField
+from mongoengine import (
+    EmbeddedDocument,
+    DynamicField,
+    StringField,
+    ComplexDateTimeField,
+)
 
 
-## This model describes a specific (set of) attributes with 
+## This model describes a specific (set of) attributes with
 #  value(s) associated with a Fill, Run, File,Emulsion or Brick.
 #  @property name:            (string) Name of the attribute; must not be empty.
 #  @property type:            (string) Type of the attribute.
