@@ -1,24 +1,16 @@
-###
-#
-# This is an example file to demonstrate how the conditionsDatabase API works
-# It reads the geometry file and adds subdetectors with their positions to the condDB
-# Takes about 5 mins to fill the condDB
-###
-import sys
-import getopt
+"""
+List detectors
+
+This is an example file to demonstrate how the conditionsDatabase API works
+It reads the geometry file and adds subdetectors with their positions to the condDB
+Takes about 5 mins to fill the condDB
+"""
+from argparse import ArgumentParser
 from factory import APIFactory
 
-level = 0
-try:
-    opts, args = getopt.getopt(sys.argv[1:], "l:", [])
-except getopt.GetoptError:
-    # print help information and exit:
-    print(" enter -l: level")
-    sys.exit()
-
-for o, a in opts:
-    if o in ("-l",):
-        level = int(a)
+parser = ArgumentParser()
+parser.add_argument("-l", "--level", help="TODO", required=True, type=int)
+options = parser.parse_args()
 
 # Instantiate an API factory
 api_factory = APIFactory()
@@ -26,12 +18,14 @@ api_factory = APIFactory()
 
 conditionsDB = api_factory.construct_DB_API("config.yml")
 
-detector = ""
-count = 0
+DETECTOR = ""
+COUNT = 0
 
 
 def showdetectors(detector, count, level):
-    # Show all detector names in the database:
+    """
+    Show all detector names in the database:
+    """
     result = conditionsDB.list_detectors(detector)
     for sd in result:
         if detector == "":
@@ -48,5 +42,4 @@ def showdetectors(detector, count, level):
         print("No more subdetectors below subdetector/channel:", detector)
 
 
-showdetectors(detector, count, level)
-sys.exit()
+showdetectors(DETECTOR, COUNT, options.level)
