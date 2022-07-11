@@ -93,6 +93,7 @@ disable=raw-checker-failed,
         use-symbolic-message-instead,
         import-error,
         invalid-name,
+        too-few-public-methods,
 	fixme
 
 # Enable the message, report, category or checker with the given id(s). You can

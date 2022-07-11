@@ -1,37 +1,42 @@
 """ This module implements the factory pattern for getting a database API instance. """
 import os
 import sys
-import yaml
 
 ## As of Python 3.8 we can do more with typing. It is recommended to make
 ## the factory class final. Use the following import and provided
 ## decorator for the class.
 from typing import final
+import yaml
+
 
 from databases.mongodb.mongodbadapter import MongoToCDBAPIAdapter
 
 
-### This class creates an instance of the specified database API.
 @final
 class APIFactory:
+    """
+    This class creates an instance of the specified database API.
+    """
+
     def __init__(self):
         # supported_db_types is the list of different database back-ends which are supported
         self.__supported_db_types = ["mongo"]
 
-    ### Returns an instance of the specified database API based on a configuration file
-    #   @param  path:                   The path to the configuration file. This field can be
-    #                                   left empty/None, then the default path will be considered
-    #                                   The default path is $FAIRSHIP/conditionsDatabase/config.yml
-    #   @throw  NotImplementedError:    If the specified database is not supported
-    #   @return                         Instance of the specified database API
     def construct_DB_API(self, path=None):
+        """Returns an instance of the specified database API based on a configuration file
+
+        @param  path:                   The path to the configuration file.
+                                        This field can be left empty/None,
+                                        then the default path will be considered, which is
+                                        $FAIRSHIP/conditionsDatabase/config.yml
+        @throw  NotImplementedError:    If the specified database is not supported
+        @return                         Instance of the specified database API
+        """
 
         config = self.__read_config_file(path)
 
         if config is None or len(config) <= 0:
             raise ValueError("Error in reading or accessing the configuration file")
-        # evh
-        # db_type = config.keys()[0]
         db_type = "mongo"
         connection_dict = config[db_type]
 
@@ -43,14 +48,16 @@ class APIFactory:
         # FUTURE: Add more storage back-ends here
         raise NotImplementedError(db_type + " database is not supported")
 
-    ### Loads the configuration from the config file, including the database type and also
-    # the connection information.
-    #   @param  path:           The path to the configuration file. It could be "", then
-    #                           the default path will be considered
-    #                           The default path is $FAIRSHIP/conditionsDatabase/config.yml
-    #   @throw  KeyError:       If the configuration file is incomplete
-    #   @return                 The connection dictionary
     def __read_config_file(self, path):
+        """Loads the configuration from the config file, including the database type and also
+        the connection information.
+
+        @param  path:           The path to the configuration file. It could be "", then
+                                the default path will be considered
+                                The default path is $FAIRSHIP/conditionsDatabase/config.yml
+        @throw  KeyError:       If the configuration file is incomplete
+        @return                 The connection dictionary
+        """
         ret = {}
 
         if not path:
@@ -59,16 +66,16 @@ class APIFactory:
         else:
             path_details = path.split(".")
             file_extention = path_details[len(path_details) - 1]
-            if not (file_extention == "yml" or file_extention == "yaml"):
+            if file_extention not in ("yml", "yaml"):
                 print("The file extension is incorrect. A YAML file is required.")
                 return None
 
         try:
-            with open(path, "r") as ymlfile:
+            with open(path, "r", encoding="utf-8") as ymlfile:
                 cfg = yaml.load(ymlfile, Loader=yaml.FullLoader)
         except IOError:
             print(
-                "The configuration file does not exit or Invalid path to " "the file:",
+                "The configuration file does not exit or Invalid path to the file:",
                 str(sys.exc_info()[0]),
             )
             return None
