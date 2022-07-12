@@ -1,16 +1,12 @@
-###
-#
-# This is an example file to demonstrate how the conditionsDatabase API works
-#
-###
-from ..factory import APIFactory
+"""This is an example file to demonstrate how the conditionsDatabase API works."""
 import datetime
+from factory import APIFactory
 
 
 # Instantiate an API factory
 api_factory = APIFactory()
 # Call construct_DB_API to get an CDB API instance, the path must lead to a valid config.yml file containing the database configuration
-conditionsDB = api_factory.construct_DB_API("/FairShip/conditionsDatabase/config.yml")
+conditionsDB = api_factory.construct_DB_API("config.yml")
 
 value_array = {"x": [5, 2, 6, 3, 7]}
 
@@ -34,9 +30,9 @@ conditionsDB.add_condition(
     "detector3/subdetector1",
     "conditionName1",
     "SampleTag",
-    "2020-03-21 18:14",
     value_array,
     "testType",
+    "2020-03-21 18:14",
     "2020-03-21 18:12",
     "2020-05-20",
 )
@@ -44,9 +40,9 @@ conditionsDB.add_condition(
     "detector3/subdetector1",
     "conditionsName1",
     "SampleTag2",
-    datetime.datetime(2020, 3, 22, 20, 20),
     value_array,
     "testType",
+    datetime.datetime(2020, 3, 22, 20, 20),
     datetime.datetime(2020, 3, 23, 18, 12),
     datetime.datetime(2020, 3, 23, 18, 12),
 )
@@ -55,8 +51,8 @@ conditionsDB.add_condition(
     "detector3/subdetector1",
     "conditionsName1",
     "SampleTag3",
-    datetime.datetime(2020, 3, 25, 20, 20),
     value_array,
+    collected_at=datetime.datetime(2020, 3, 25, 20, 20),
 )
 
 # Get detector dictionary by specifying the detectorID: "Detector/subdetector/subdetector ..."
