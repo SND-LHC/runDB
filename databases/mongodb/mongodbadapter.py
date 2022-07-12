@@ -7,7 +7,7 @@ from datetime import datetime
 ## the adapter class final. Use the following import and provided
 ## decorator for the class.
 from typing import final
-from mongoengine import connect, DoesNotExist
+from mongoengine import connect, DoesNotExist, disconnect
 
 
 # evh add  databases.mongodb.
@@ -1588,3 +1588,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If detector_id does not exist.
         """
+
+    def __del__(self):
+        """Destruct."""
+        disconnect()

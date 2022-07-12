@@ -1,5 +1,4 @@
-""" This module implements the factory pattern for getting a database API instance. """
-import os
+"""This module implements the factory pattern for getting a database API instance."""
 import sys
 
 ## As of Python 3.8 we can do more with typing. It is recommended to make
@@ -14,16 +13,17 @@ from databases.mongodb.mongodbadapter import MongoToCDBAPIAdapter
 
 @final
 class APIFactory:
-    """
-    This class creates an instance of the specified database API.
-    """
+    """This class creates an instance of the specified database API."""
 
     def __init__(self):
+        """Construct."""
         # supported_db_types is the list of different database back-ends which are supported
-        self.__supported_db_types = ["mongo"]
+        self.__supported_db_types = [
+            "mongo",
+        ]
 
     def construct_DB_API(self, path=None):
-        """Returns an instance of the specified database API based on a configuration file
+        """Return an instance of the specified database API based on a configuration file.
 
         @param  path:                   The path to the configuration file.
                                         This field can be left empty/None,
@@ -32,13 +32,19 @@ class APIFactory:
         @throw  NotImplementedError:    If the specified database is not supported
         @return                         Instance of the specified database API
         """
-
         config = self.__read_config_file(path)
 
         if config is None or len(config) <= 0:
             raise ValueError("Error in reading or accessing the configuration file")
-        db_type = "mongo"
-        connection_dict = config[db_type]
+
+        db_type = list(config.keys())[0]
+
+        try:
+            connection_dict = config[db_type]
+        except KeyError as e:
+            raise KeyError(
+                f"Config file does not contain config for {db_type=}."
+            ) from e
 
         if db_type not in self.__supported_db_types:
             raise NotImplementedError(db_type + " database is not supported")
@@ -49,8 +55,7 @@ class APIFactory:
         raise NotImplementedError(db_type + " database is not supported")
 
     def __read_config_file(self, path):
-        """Loads the configuration from the config file, including the database type and also
-        the connection information.
+        """Load the configuration from the config file, including the database type and also the connection information.
 
         @param  path:           The path to the configuration file. It could be "", then
                                 the default path will be considered
@@ -61,8 +66,8 @@ class APIFactory:
         ret = {}
 
         if not path:
-            home_dir = str(os.getenv("FAIRSHIP"))
-            path = home_dir + "/conditionsDatabase/config.yml"
+            # TODO unhardcode
+            path = "config.yml"
         else:
             path_details = path.split(".")
             file_extention = path_details[len(path_details) - 1]
@@ -105,8 +110,6 @@ class APIFactory:
             connection_dict["password"] = cfg[db_type]["password"]
             connection_dict["port"] = cfg[db_type]["port"]
             ret[db_type.lower()] = connection_dict
-            # evh print
-            # print (" connection_dict=",connection_dict)
             return ret
         except KeyError:
             print(
