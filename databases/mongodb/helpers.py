@@ -1,13 +1,11 @@
-"""
-Helper functions for the mongodbadapter
-"""
+"""Helper functions for the mongodbadapter."""
 
 import datetime
 
 
-def __validate_str(input_string):
-    """
-    This function validates if input_string is of string type.
+def validate_str(input_string):
+    """Validate whether input_string is of string type.
+
     If it is not of String type it returns False.
 
     :param input_string: value that needs to be tested.
@@ -17,9 +15,9 @@ def __validate_str(input_string):
     return False
 
 
-def __validate_datetime(input_datetime):
-    """
-    This function validates if input_datetime is of datetime type.
+def validate_datetime(input_datetime):
+    """Validate whether input_datetime is of datetime type.
+
     If it is not of datetime type it returns False.
 
     :param input_datetime: value that needs to be tested.
@@ -29,9 +27,9 @@ def __validate_datetime(input_datetime):
     return False
 
 
-def __validate_path(input_path):
-    """
-    This function validates if input_path is a valid path.
+def validate_path(input_path):
+    """Validate whether input_path is a valid path.
+
     If it is not of String type it returns False.
 
     :param input_path: value that needs to be tested.
@@ -42,9 +40,9 @@ def __validate_path(input_path):
     return False
 
 
-def __validate_interval_parameters(input_date):
-    """
-    This function validates if input_date is a datetime type or string.
+def validate_interval_parameters(input_date):
+    """Validate whether input_date is a datetime type or string.
+
     If yes, it returns True. Otherwise it returns False.
 
     :param input_date: It could be String or datetime type.
@@ -54,43 +52,38 @@ def __validate_interval_parameters(input_date):
     return False
 
 
-def __sanitize_str(input_string):
-    """
-    This function removes spaces at the beginning and at the end of the string and
-    returns the String without spaces.
+def sanitize_str(input_string):
+    """Remove spaces at the beginning and at the end of the string and returns the String without spaces.
 
     :param input_string: string that will be sanitized.
     """
     return input_string.strip()
 
 
-def __sanitize_path(input_path):
-    """
-    This function removes slashes and spaces at the beginning and
-    at the end of the parameter input_path.
+def sanitize_path(input_path):
+    """Remove slashes and spaces at the beginning and at the end of the parameter input_path.
 
     :param input_path: string that will be sanitized.
     """
-    input_path = __sanitize_str(input_path)
+    input_path = sanitize_str(input_path)
     return input_path.strip("/")
 
 
-def __split_detector_names(detector_id):
-    """
-    Splits the detector_id string using '/' and returns a list of detector names.
+def split_detector_names(detector_id):
+    """Split the detector_id string using '/' and returns a list of detector names.
+
     Otherwise raises an exception if detector_id is not a valid path / id.
 
     :param detector_id: path to a detector (e.g. detect_name/subdetector_name/...).
     """
-    if __validate_path(detector_id):
-        detector_id = __sanitize_path(detector_id)
+    if validate_path(detector_id):
+        detector_id = sanitize_path(detector_id)
         return detector_id.split("/")
     raise TypeError("The provided detector_id needs to be a valid path")
 
 
-def __convert_date(input_date_string):
-    """
-    This function converts a date string to a datetime Object.
+def convert_date(input_date_string):
+    """Convert a date string to a datetime Object.
 
     :param 	input_date_string: String representing a date
             Accepted String formats: "Year", "Year-Month", "Year-Month-Day", "Year-Month-Day Hours",
