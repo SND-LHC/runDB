@@ -130,17 +130,15 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = detector_wrapper.detector
         path = ""
 
-        for i in range(1, len(detector_names)):
-            detector = self.__get_subdetector(detector, detector_names[i])
-            path = path + "/" + detector_names[i]
+        for detector_name in detector_names[1:]:
+            detector = self.__get_subdetector(detector, detector_name)
+            path = path + "/" + detector_name
 
             if detector is None:
                 path = sanitize_path(path)
-                # evh
-                print("The detector " + path + " does not exist in the database")
-                # raise ValueError("The detector " +
-                #                 path +
-                #                 " does not exist in the database")
+                raise ValueError(
+                    "The detector " + path + " does not exist in the database"
+                )
 
         return detector
 
@@ -664,9 +662,7 @@ class MongoToCDBAPIAdapter(APIInterface):
                 wrapper.save()
             # If the wrapper already exist throw an error
             else:
-                # evh. should not crash when detector already exists
-                print("The detector '", name, "' already exists. Nothing done.")
-                # raise ValueError("The detector '" + name + "' already exists")
+                raise ValueError("The detector '" + name + "' already exists")
 
         # If we add a subdetector
         else:

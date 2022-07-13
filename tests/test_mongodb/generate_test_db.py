@@ -1,11 +1,12 @@
-""" This module generates a test database for MongoDB tests. """
+"""This module generates a test database for MongoDB tests."""
 import datetime
 import yaml
+from mongoengine import connect, disconnect
 
-from ...databases.mongodb.models.detector import Detector
-from ...databases.mongodb.models.detectorWrapper import DetectorWrapper
-from ...databases.mongodb.models.condition import Condition
-from mongoengine import connect
+from databases.mongodb.models.detector import Detector
+from databases.mongodb.models.detectorWrapper import DetectorWrapper
+from databases.mongodb.models.condition import Condition
+from databases.mongodb.helpers import create_uri
 
 
 # Module metadata
@@ -16,27 +17,10 @@ __status__ = "Prototype"
 __description__ = "Delete test database > Create test database > Insert test data"
 
 
-# Delete database
-def delete_db(connection_dict):
-    """
-    Delete the database of which name is provided.
-    :param connection_dict: Dict containinig all the information to make a connection.
-    """
-    db_connect = connect(
-        db=connection_dict["db_name"],
-        username=connection_dict["user"],
-        password=connection_dict["password"],
-        host=connection_dict["host"],
-        port=connection_dict["port"],
-    )
-
-    db_connect.drop_database(connection_dict["db_name"])
-
-
 # Fetch database details from config file
 # with open(r'test_mongodb_config.yml') as file:  # local path
 with open(
-    r"conditionsDatabase/tests/test_mongodb/test_mongodb_config.yml"
+    r"tests/test_mongodb/test_mongodb_config.yml", encoding="utf-8"
 ) as file:  # CI path
     # The FullLoader parameter handles the conversion from YAML
     # scalar values to Python the dictionary format
@@ -44,17 +28,13 @@ with open(
 
 connection_dict = con_dic["mongo"]
 
-# Everytime empty database before filling data
-delete_db(connection_dict)
 
 # Create a DB connection
-connect(
-    db=connection_dict["db_name"],
-    username=connection_dict["user"],
-    password=connection_dict["password"],
-    host=connection_dict["host"],
-    port=connection_dict["port"],
-)
+# For some reason authentication only works using URI
+db_connect = connect(host=create_uri(connection_dict))
+
+# Everytime empty database before filling data
+db_connect.drop_database(connection_dict["db_name"])
 
 # Create detector detector_id_exist
 detector_wrapper = DetectorWrapper(name="detector_id_exist")
@@ -124,3 +104,5 @@ detector_2.subdetectors.append(sub_detector_2)
 
 detector_wrapper.detector = detector_2
 detector_wrapper.save()
+
+disconnect()

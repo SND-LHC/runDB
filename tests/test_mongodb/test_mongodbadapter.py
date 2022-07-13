@@ -1,7 +1,6 @@
-""" This module contains regression tests for the MongoDB CDB adapter. """
-import os
-import pytest
+"""This module contains regression tests for the MongoDB CDB adapter."""
 import datetime
+import pytest
 
 from ...factory import APIFactory
 
@@ -16,21 +15,17 @@ __description__ = "This file contains the test cases for Mongo DB API."
 
 @pytest.fixture
 def cdb_api():
-    """
-    provides access to the condition database api
+    """Provide access to the condition database api.
 
     :return: api
     """
-
-    home_dir = os.getenv("FAIRSHIP")
     factory = APIFactory()
-    db_api = factory.construct_DB_API(
-        home_dir + "/conditionsDatabase/tests/test_mongodb/test_mongodb_config.yml"
-    )
+    db_api = factory.construct_DB_API("tests/test_mongodb/test_mongodb_config.yml")
 
     return db_api
 
 
+@pytest.mark.order(1)
 @pytest.mark.parametrize(
     "detector_id",
     [
@@ -67,16 +62,15 @@ def cdb_api():
     ],
 )
 def test_get_detector(cdb_api, detector_id):
-    """
-    test get_detector()
-    this function must be executed first because the other functions relies heavily
-    on this function
+    """Test get_detector().
+
+    This function must be executed first because the other functions relie heavily on this function.
 
     :param cdb_api: API
     :param detector_id: String identifying the detector to retrieve (i.e. 'muonflux/straw_tubes').
     """
     has_correct_parameter = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
@@ -107,11 +101,11 @@ def test_get_detector(cdb_api, detector_id):
         result = cdb_api.get_detector(detector_id)
         # check if the result is dict or None
         assert (
-            type(result) == dict or result is None
+            isinstance(result, dict) or result is None
         ), "The result type must be a dict object (if found) or None (if not found)"
 
         # check if the result has the correct name
-        if type(result) == dict:
+        if isinstance(result, dict):
             # check if the returned detector still has the same detector_id.
             if detector_id == "/detector_id_exist/":
                 assert (
@@ -225,15 +219,14 @@ def test_get_detector(cdb_api, detector_id):
     ],
 )
 def test_get_conditions(cdb_api, detector_id):
-    """
-    test get_conditions()
+    """Test get_conditions().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
     conditions must be retrieved (i.e. 'muonflux/straw_tubes').
     """
     has_correct_parameter = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
@@ -259,7 +252,7 @@ def test_get_conditions(cdb_api, detector_id):
         result = cdb_api.get_conditions(detector_id)
         # check if the result is a list or None
         assert (
-            type(result) == list or result is None
+            isinstance(result, list) or result is None
         ), "the returned type must be list object (if found) or None (if not found)"
 
         # check if the result has the correct value
@@ -289,8 +282,7 @@ def test_get_conditions(cdb_api, detector_id):
     ],
 )
 def test_get_conditions_by_name(cdb_api, detector_id, name):
-    """
-    test get_conditions_by_name()
+    """Test get_conditions_by_name().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
@@ -298,15 +290,14 @@ def test_get_conditions_by_name(cdb_api, detector_id, name):
     :param name: String specifying the name of the conditions to be retrieved (e.g.
     'strawPositions').
     """
-
     has_correct_parameter_type = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter_type = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
             assert cdb_api.get_conditions_by_name(detector_id, name)
 
-    if type(name) != str:
+    if not isinstance(name, str):
         has_correct_parameter_type = False
         # raise TypeError when name is not an str.
         with pytest.raises(TypeError):
@@ -327,7 +318,7 @@ def test_get_conditions_by_name(cdb_api, detector_id, name):
         result = cdb_api.get_conditions_by_name(detector_id, name)
         # check if the result is a list.
         assert (
-            type(result) == list or result is None
+            isinstance(result, list) or result is None
         ), "The result type must be a list (if found) or None (if not found)"
         # check if the result has the correct value
         if detector_id == "detector_id_exist" and name == "condition_exist":
@@ -438,8 +429,7 @@ def test_get_conditions_by_name(cdb_api, detector_id, name):
 def test_get_conditions_by_name_and_validity(
     cdb_api, detector_id, name, start_date, end_date
 ):
-    """
-    test get_conditions_by_name_and_validity()
+    """Test get_conditions_by_name_and_validity().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
@@ -449,9 +439,8 @@ def test_get_conditions_by_name_and_validity(
     :param start_date: Timestamp specifying a date/time for which conditions must be valid.
     :param end_date: Timestamp specifying the end of a date/time range for which conditions must be valid.
     """
-
     has_correct_parameter_type = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter_type = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
@@ -459,7 +448,7 @@ def test_get_conditions_by_name_and_validity(
                 detector_id, name, start_date, end_date
             )
 
-    if type(name) != str:
+    if not isinstance(name, str):
         has_correct_parameter_type = False
         # raise TypeError when name is not an str.
         with pytest.raises(TypeError):
@@ -467,10 +456,8 @@ def test_get_conditions_by_name_and_validity(
                 detector_id, name, start_date, end_date
             )
 
-    if (type(start_date) != str and type(start_date) != datetime.datetime) or (
-        type(end_date) != str
-        and type(end_date) != datetime.datetime
-        and end_date is not None
+    if (not isinstance(start_date, (str, datetime.datetime))) or (
+        not isinstance(end_date, (str, datetime.datetime)) and end_date is not None
     ):
         has_correct_parameter_type = False
         # raise TypeError when date is not an str.
@@ -479,7 +466,7 @@ def test_get_conditions_by_name_and_validity(
                 detector_id, name, start_date, end_date
             )
 
-    if type(start_date) == str:
+    if isinstance(start_date, str):
         if not has_correct_format(start_date):
             has_correct_parameter_type = False
             # raise ValueError when the format is wrong
@@ -488,7 +475,7 @@ def test_get_conditions_by_name_and_validity(
                     detector_id, name, start_date, end_date
                 )
 
-    if type(end_date) == str:
+    if isinstance(end_date, str):
         if not has_correct_format(end_date):
             has_correct_parameter_type = False
             # raise ValueError when the format is wrong
@@ -515,7 +502,7 @@ def test_get_conditions_by_name_and_validity(
         )
         # check if the result is a list or None
         assert (
-            type(result) == list or result is None
+            isinstance(result, list) or result is None
         ), "The result type must be a list (if found) or None (if not found)"
 
         valid_cases = [
@@ -561,7 +548,7 @@ def test_get_conditions_by_name_and_validity(
 
         # check if the value is correct
         if True in valid_cases:
-            assert type(result) == list, (
+            assert isinstance(result, list), (
                 "it must return a value. detector_id: "
                 + detector_id
                 + " name: "
@@ -593,7 +580,7 @@ def test_get_conditions_by_name_and_validity(
         if True in invalid_cases:
             assert result is None, "it must return None"
 
-        if type(result) == list:
+        if isinstance(result, list):
             assert len(result) == 1, "the result must be a list with one data"
 
 
@@ -615,8 +602,7 @@ def test_get_conditions_by_name_and_validity(
     ],
 )
 def test_get_condition_by_name_and_tag(cdb_api, detector_id, name, tag):
-    """
-    test get_condition_by_name_and_tag()
+    """Test get_condition_by_name_and_tag().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
@@ -625,21 +611,20 @@ def test_get_condition_by_name_and_tag(cdb_api, detector_id, name, tag):
     'strawPositions').
     :param tag: String specifying the tag of the condition to be retrieved.
     """
-
     has_correct_parameter_type = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter_type = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
             assert cdb_api.get_condition_by_name_and_tag(detector_id, name, tag)
 
-    if type(name) != str:
+    if not isinstance(name, str):
         has_correct_parameter_type = False
         # raise TypeError when name is not an str.
         with pytest.raises(TypeError):
             assert cdb_api.get_condition_by_name_and_tag(detector_id, name, tag)
 
-    if type(tag) != str:
+    if not isinstance(tag, str):
         has_correct_parameter_type = False
         # raise TypeError when tag is not an str.
         with pytest.raises(TypeError):
@@ -660,7 +645,7 @@ def test_get_condition_by_name_and_tag(cdb_api, detector_id, name, tag):
         result = cdb_api.get_condition_by_name_and_tag(detector_id, name, tag)
         # check if the result is dict or None
         assert (
-            type(result) == dict or result is None
+            isinstance(result, dict) or result is None
         ), "The result type must be a dict (if found) or None (if not found)"
 
         if (
@@ -669,7 +654,7 @@ def test_get_condition_by_name_and_tag(cdb_api, detector_id, name, tag):
             and tag == "tag"
         ):
             # check if the value is correct
-            assert type(result) == dict, "the returned value must be a dictionary"
+            assert isinstance(result, dict), "the returned value must be a dictionary"
             assert result["name"] == "condition_exist", "condition name value is wrong"
             assert result["tag"] == "tag", "condition tag value is wrong"
             assert result["type"] == "type", "condition type value is wrong"
@@ -708,23 +693,21 @@ def test_get_condition_by_name_and_tag(cdb_api, detector_id, name, tag):
     ],
 )
 def test_get_conditions_by_tag(cdb_api, detector_id, tag):
-    """
-    test get_conditions_by_tag()
+    """Test get_conditions_by_tag().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
     condition must be retrieved (i.e. 'muonflux/straw_tubes').
     :param tag: String specifying the tag of the condition to be retrieved.
     """
-
     has_correct_parameter_type = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter_type = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
             assert cdb_api.get_conditions_by_tag(detector_id, tag)
 
-    if type(tag) != str:
+    if not isinstance(tag, str):
         has_correct_parameter_type = False
         # raise TypeError when tag is not an str.
         with pytest.raises(TypeError):
@@ -746,12 +729,12 @@ def test_get_conditions_by_tag(cdb_api, detector_id, tag):
         result = cdb_api.get_conditions_by_tag(detector_id, tag)
         # check if the result is dict or None
         assert (
-            type(result) == list or result is None
+            isinstance(result, list) or result is None
         ), "The result type must be a dict (if found) or None (if not found)"
         # check value
         if detector_id == "detector_id_exist" and tag == "tag":
             assert (
-                type(result) == list and len(result) == 1
+                isinstance(result, list) and len(result) == 1
             ), "the returned value must be a list with one element"
             assert (
                 result[0]["name"] == "condition_exist"
@@ -807,8 +790,7 @@ def test_get_conditions_by_tag(cdb_api, detector_id, tag):
 def test_get_condition_by_name_and_collection_date(
     cdb_api, detector_id, name, collected_at
 ):
-    """
-    test get_condition_by_name_and_collection_date()
+    """Test get_condition_by_name_and_collection_date().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
@@ -819,9 +801,8 @@ def test_get_condition_by_name_and_collection_date(
     condition was collected / measured. This timestamp must be unique w.r.t.
     the condition name.
     """
-
     has_correct_parameter_type = True
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         has_correct_parameter_type = False
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
@@ -829,7 +810,7 @@ def test_get_condition_by_name_and_collection_date(
                 detector_id, name, collected_at
             )
 
-    if type(name) != str:
+    if not isinstance(name, str):
         has_correct_parameter_type = False
         # raise TypeError when name is not an str.
         with pytest.raises(TypeError):
@@ -837,7 +818,7 @@ def test_get_condition_by_name_and_collection_date(
                 detector_id, name, collected_at
             )
 
-    if type(collected_at) != str and type(collected_at) != datetime.datetime:
+    if not isinstance(collected_at, (str, datetime.datetime)):
         has_correct_parameter_type = False
         # raise TypeError when date is not an str.
         with pytest.raises(TypeError):
@@ -845,7 +826,7 @@ def test_get_condition_by_name_and_collection_date(
                 detector_id, name, collected_at
             )
 
-    if type(collected_at) is str:
+    if isinstance(collected_at, str):
         # if the format is wrong, the function has to raise ValueError
         if not has_correct_format(collected_at):
             has_correct_parameter_type = False
@@ -872,12 +853,12 @@ def test_get_condition_by_name_and_collection_date(
         )
         # check if the result type is dict or None.
         assert (
-            type(result) == dict or result is None
+            isinstance(result, dict) or result is None
         ), "The result type must be a dict (if found) or None (if not found)"
 
         # check the value
-        if type(result) == dict:
-            assert type(result) == dict, "the returned value must be a dict"
+        if isinstance(result, dict):
+            assert isinstance(result, dict), "the returned value must be a dict"
             assert result["name"] == "condition_exist", "condition name value is wrong"
             assert result["tag"] == "tag", "condition tag value is wrong"
             assert result["type"] == "type", "condition type value is wrong"
@@ -914,15 +895,14 @@ def test_get_condition_by_name_and_collection_date(
     ],
 )
 def test_list_detectors(cdb_api, parent_id):
-    """
-    test list_detectors()
+    """Test list_detectors().
 
     :param cdb_api: API
     :param parent_id: (optional) String identifying the parent detector to
     retrieve the (sub)detector names for (i.e. 'muonflux/straw_tubes').
     """
     has_correct_parameter = True
-    if type(parent_id) != str and parent_id is not None:
+    if not isinstance(parent_id, str) and parent_id is not None:
         has_correct_parameter = False
         # raise TypeError when parent_id is not an str.
         with pytest.raises(TypeError):
@@ -938,7 +918,7 @@ def test_list_detectors(cdb_api, parent_id):
         result = cdb_api.list_detectors(parent_id)
         # check if the result is a list
         assert (
-            type(result) == list or result is None
+            isinstance(result, list) or result is None
         ), "The result type must be a list object (if found) or None (if not found)"
 
         # check when the parent_id is None, it should return all first level detectors
@@ -949,7 +929,7 @@ def test_list_detectors(cdb_api, parent_id):
 
         # check if there is an element that is not str and if the detector exists
         for detector in result:
-            assert type(detector) == str, "Every element must be a str"
+            assert isinstance(detector, str), "Every element must be a str"
             tmp_detector = None
             try:
                 tmp_detector = cdb_api.get_detector(detector)
@@ -1006,8 +986,7 @@ def test_list_detectors(cdb_api, parent_id):
     ],
 )
 def test_add_detector(cdb_api, name, parent_id):
-    """
-    test add_detector()
+    """Test add_detector().
 
     :param cdb_api: API
     :param name: String specifying the name for the new detector. Must
@@ -1015,15 +994,14 @@ def test_add_detector(cdb_api, name, parent_id):
     :param parent_id: (optional) String identifying the parent detector the
     new detector should be added to as subdetector.
     """
-
     has_correct_parameter = True
-    if type(name) != str:
+    if not isinstance(name, str):
         has_correct_parameter = False
         # raise TypeError when detector_id is not a str.
         with pytest.raises(TypeError):
             assert cdb_api.add_detector(name, parent_id)
 
-    if type(parent_id) != str and parent_id is not None:
+    if not isinstance(parent_id, str) and parent_id is not None:
         has_correct_parameter = False
         # raise TypeError when parent_id is not a str and not None.
         with pytest.raises(TypeError):
@@ -1269,8 +1247,7 @@ def test_add_condition(
     valid_since,
     valid_until,
 ):
-    """
-    test add_condition()
+    """Test add_condition().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector to which the
@@ -1287,15 +1264,14 @@ def test_add_condition(
     :param valid_until: Timestamp specifying the date/time the
     condition up until the condition is valid.
     """
-
     has_correct_parameter_type = True
     if (
-        type(detector_id) != str
+        not isinstance(detector_id, str)
         or detector_id == ""
-        or type(name) != str
+        or not isinstance(name, str)
         or name == ""
-        or (type(test_type) != str and type(test_type) is not None)
-        or type(tag) != str
+        or (not isinstance(test_type, str) and test_type is not None)
+        or not isinstance(tag, str)
         or tag == ""
         or values == ""
         or values is None
@@ -1317,18 +1293,15 @@ def test_add_condition(
 
     if (
         (
-            type(collected_at) != str
-            and type(collected_at) != datetime.datetime
+            not isinstance(collected_at, (str, datetime.datetime))
             and collected_at is not None
         )
         or (
-            type(valid_since) != str
-            and type(valid_since) != datetime.datetime
+            not isinstance(valid_since, (str, datetime.datetime))
             and valid_since is not None
         )
         or (
-            type(valid_until) != str
-            and type(valid_until) != datetime.datetime
+            not isinstance(valid_until, (str, datetime.datetime))
             and valid_until is not None
         )
     ):
@@ -1347,9 +1320,9 @@ def test_add_condition(
             )
 
     if (
-        type(collected_at) == str
-        or type(valid_until) == str
-        or type(valid_since) == str
+        isinstance(collected_at, str)
+        or isinstance(valid_until, str)
+        or isinstance(valid_since, str)
     ) and has_correct_parameter_type:
         # if all parameters have correct type, but collected_at, valid_until, or
         # valid_since's format is wrong, the function must raise ValueError
@@ -1373,8 +1346,8 @@ def test_add_condition(
 
     # when valid_since is greater than valid_until, raise ValueError
     if (
-        type(valid_since) == datetime.datetime
-        and type(valid_until) == datetime.datetime
+        isinstance(valid_since, datetime.datetime)
+        and isinstance(valid_until, datetime.datetime)
     ) and valid_since > valid_until:
         has_correct_parameter_type = False
         with pytest.raises(ValueError):
@@ -1391,7 +1364,7 @@ def test_add_condition(
 
     # when valid_since is greater than valid_until, raise ValueError
     if (
-        type(valid_since) == str and type(valid_until) == str
+        isinstance(valid_since, str) and isinstance(valid_until, str)
     ) and has_correct_parameter_type:
         if valid_since == "" or valid_until == "":
             has_correct_parameter_type = False
@@ -1424,10 +1397,10 @@ def test_add_condition(
                     )
 
     # when detector does not exist, it must raise ValueError
-    if (
-        detector_id == "detector_id_not_exist"
-        or detector_id == "detector_id_exist/sub_detector_not_exist"
-    ):
+    if detector_id in [
+        "detector_id_not_exist",
+        "detector_id_exist/sub_detector_not_exist",
+    ]:
         has_correct_parameter_type = False
         with pytest.raises(ValueError):
             assert cdb_api.add_condition(
@@ -1495,11 +1468,11 @@ def test_add_condition(
         assert new_condition["type"] == test_type, "type is not correct"
 
         # Check if the collected_at is correct
-        if type(collected_at) == datetime.datetime:
+        if isinstance(collected_at, datetime.datetime):
             assert __convert_str_to_datetime(
                 new_condition["collected_at"]
             ) == collected_at.replace(microsecond=0), "collected_at is not correct"
-        elif type(collected_at) == str:
+        elif isinstance(collected_at, str):
             assert __convert_str_to_datetime(
                 new_condition["collected_at"]
             ) == __convert_str_to_datetime(collected_at).replace(
@@ -1507,11 +1480,11 @@ def test_add_condition(
             ), "collected_at is not correct"
 
         # Check if the valid_until exists
-        if type(valid_until) == datetime.datetime:
+        if isinstance(valid_until, datetime.datetime):
             assert __convert_str_to_datetime(
                 new_condition["valid_until"]
             ) == valid_until.replace(microsecond=0), "valid_until is not correct"
-        elif type(valid_until) == str:
+        elif isinstance(valid_until, str):
             assert __convert_str_to_datetime(
                 new_condition["valid_until"]
             ) == __convert_str_to_datetime(valid_until).replace(
@@ -1634,8 +1607,7 @@ def test_add_condition(
 def test_update_condition_by_name_and_tag(
     cdb_api, detector_id, name, tag, test_type, valid_since, valid_until
 ):
-    """
-    test update_condition_by_name_and_tag()
+    """Test update_condition_by_name_and_tag().
 
     :param cdb_api: API
     :param detector_id: String identifying the detector for which the
@@ -1651,10 +1623,10 @@ def test_update_condition_by_name_and_tag(
     """
     has_correct_parameter = True
     if (
-        type(detector_id) != str
-        or type(name) != str
-        or type(tag) != str
-        or (type(test_type) != str and test_type is not None)
+        not isinstance(detector_id, str)
+        or not isinstance(name, str)
+        or not isinstance(tag, str)
+        or (not isinstance(test_type, str) and test_type is not None)
     ):
         has_correct_parameter = False
         # raise TypeError when detector/name/tag_id is not an str.
@@ -1664,12 +1636,10 @@ def test_update_condition_by_name_and_tag(
             )
 
     if (
-        type(valid_since) != str
-        and type(valid_since) != datetime.datetime
+        not isinstance(valid_since, (str, datetime.datetime))
         and valid_since is not None
     ) or (
-        type(valid_until) != str
-        and type(valid_until) != datetime.datetime
+        not isinstance(valid_until, (str, datetime.datetime))
         and valid_until is not None
     ):
         has_correct_parameter = False
@@ -1679,7 +1649,7 @@ def test_update_condition_by_name_and_tag(
                 detector_id, name, tag, test_type, valid_since, valid_until
             )
 
-    if type(valid_since) == str and not has_correct_format(valid_since):
+    if isinstance(valid_since, str) and not has_correct_format(valid_since):
         has_correct_parameter = False
         # if the format is wrong, the function has to raise ValueError
         with pytest.raises(ValueError):
@@ -1687,7 +1657,7 @@ def test_update_condition_by_name_and_tag(
                 detector_id, name, tag, test_type, valid_since, valid_until
             )
 
-    if type(valid_until) == str and not has_correct_format(valid_until):
+    if isinstance(valid_until, str) and not has_correct_format(valid_until):
         has_correct_parameter = False
         # if the format is wrong, the function has to raise ValueError
         with pytest.raises(ValueError):
@@ -1696,8 +1666,8 @@ def test_update_condition_by_name_and_tag(
             )
 
     if (
-        type(valid_since) == datetime.datetime
-        and type(valid_until) == datetime.datetime
+        isinstance(valid_since, datetime.datetime)
+        and isinstance(valid_until, datetime.datetime)
         and valid_since > valid_until
     ):
         has_correct_parameter = False
@@ -1707,10 +1677,10 @@ def test_update_condition_by_name_and_tag(
                 detector_id, name, tag, test_type, valid_since, valid_until
             )
 
-    if (
-        detector_id == "detector_id_not_exist"
-        or detector_id == "detector_id_exist/sub_detector_id_not_exist"
-    ):
+    if detector_id in [
+        "detector_id_not_exist",
+        "detector_id_exist/sub_detector_id_not_exist",
+    ]:
         has_correct_parameter = False
         # if detector_id does not exist, raise ValueError
         with pytest.raises(ValueError):
@@ -1734,26 +1704,26 @@ def test_update_condition_by_name_and_tag(
         # check if the result is correct.
         if detector_id == "detector_id_exist":
             result_con = cdb_api.get_condition_by_name_and_tag(detector_id, name, tag)
-            if type(valid_since) == str:
+            if isinstance(valid_since, str):
                 assert __convert_str_to_datetime(
                     result_con["valid_since"]
                 ) == __convert_str_to_datetime(valid_since).replace(
                     microsecond=0
                 ), "valid_since is not updated successfully"
-            elif type(valid_since) == datetime.datetime:
+            elif isinstance(valid_since, datetime.datetime):
                 assert __convert_str_to_datetime(
                     result_con["valid_since"]
                 ) == valid_since.replace(
                     microsecond=0
                 ), "valid_since is not updated successfully"
 
-            if type(valid_until) == str:
+            if isinstance(valid_until, str):
                 assert __convert_str_to_datetime(
                     result_con["valid_until"]
                 ) == __convert_str_to_datetime(valid_until).replace(
                     microsecond=0
                 ), "valid_until is not updated successfully"
-            elif type(valid_until) == datetime.datetime:
+            elif isinstance(valid_until, datetime.datetime):
                 assert __convert_str_to_datetime(
                     result_con["valid_until"]
                 ) == valid_until.replace(
@@ -1779,19 +1749,18 @@ def test_update_condition_by_name_and_tag(
     ],
 )
 def test_remove_detector(cdb_api, detector_id):
-    """
-    test remove_detector().
+    """Test remove_detector().
+
     This function must be executed last because the test data is used in the other test case
 
     :param cdb_api: API
     :param detector_id: String identifying the detector to remove (i.e. 'muonflux/straw_tubes').
     """
-
-    if type(detector_id) != str:
+    if not isinstance(detector_id, str):
         # raise TypeError when detector_id is not an str.
         with pytest.raises(TypeError):
             assert cdb_api.remove_detector(detector_id)
-    elif detector_id == "detector_id_not_exist" or detector_id == "":
+    elif detector_id in ["detector_id_not_exist", ""]:
         # raise ValueError since detector does not exists.
         with pytest.raises(ValueError):
             assert cdb_api.remove_detector(detector_id)
@@ -1808,14 +1777,13 @@ def test_remove_detector(cdb_api, detector_id):
 
 
 def has_correct_format(time_stamp):
-    """
-    check if the passed time_stamp has a correct format or not
+    """Check if the passed time_stamp has a correct format or not.
+
     allowed format: "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d %H", "%Y-%m-%d", "%Y-%m", "%Y"
     :param time_stamp: time_stamp with str type
     :return: Boolean validation result
     """
-
-    if type(time_stamp) != str:
+    if not isinstance(time_stamp, str):
         raise TypeError("time_stamp must be a string")
 
     # Accepted formats for time_stamp
@@ -1841,8 +1809,7 @@ def has_correct_format(time_stamp):
 
 
 def __convert_str_to_datetime(input_date_string):
-    """
-    convert string into datetime
+    """Convert string into datetime.
 
     :param input_date_string string that contains datetime value
     """
@@ -1872,5 +1839,4 @@ def __convert_str_to_datetime(input_date_string):
             "contain only digits/:/ /-. The minimum length could be 4 digits, "
             "representing the year. "
         )
-    else:
-        return datetime_value
+    return datetime_value
