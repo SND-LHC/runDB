@@ -165,7 +165,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         """
         try:
             wrapper = self.__get_wrapper(wrapper_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", wrapper_id, "' does not exist in the database"
             ) from e
@@ -199,7 +199,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
             try:
                 wrapper = self.__get_wrapper(parent_id)
-            except Exception as e:
+            except ValueError as e:
                 raise ValueError(
                     "The detector '", parent_id, "' does not exist in the database"
                 ) from e
@@ -243,7 +243,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector " + detector_id + " does not exist."
             ) from e
@@ -743,9 +743,8 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Otherwise, when we remove a subdetector
         path = ""
 
-        for i in range(0, len(detector_names) - 1):
-            # TODO What's going on here?
-            path = path + "/" + detector_names[i]
+        for name in detector_names[:-1]:
+            path += "/" + name
 
         path = sanitize_path(path)
         detector = self.__get_detector(wrapper, path)
@@ -1569,3 +1568,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If detector_id does not exist.
         """
+
+    def __del__(self):
+        """Destruct by closing connection."""
+        disconnect()
