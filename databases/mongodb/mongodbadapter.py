@@ -695,18 +695,11 @@ class MongoToCDBAPIAdapter(APIInterface):
 
             try:
                 detector.subdetectors.get(name=name)
-                # evh added this. should not crash if detector already exists.
-                print(
-                    "Detector '",
-                    parent_id,
-                    "/",
-                    name,
-                    "' already exists. Nothing done.",
-                )
-            except:
+            except DoesNotExist:
                 detector.subdetectors.append(added_detector)
                 detector_wrapper.save()
-            # raise ValueError("Detector '" + parent_id + "/" + name + "' already exist")
+                return
+            raise ValueError("Detector '" + parent_id + "/" + name + "' already exist")
 
     def remove_detector(self, detector_id):
         """Remove a detector from the database.
@@ -731,12 +724,10 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             wrapper = self.__get_wrapper(detector_id)
-        except Exception:
-            # evh
-            print("The detector '", detector_id, "' does not exist in the database")
-            # raise ValueError("The detector '",
-            #                 detector_id,
-            #                 "' does not exist in the database")
+        except Exception as e:
+            raise ValueError(
+                "The detector '", detector_id, "' does not exist in the database"
+            ) from e
 
         detector_names = split_detector_names(detector_id)
         # If we want to remove a root detector
