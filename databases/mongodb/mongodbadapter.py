@@ -11,7 +11,6 @@ from typing import final
 from mongoengine import connect, DoesNotExist, disconnect
 
 
-# evh add  databases.mongodb.
 from databases.mongodb.models.detector import Detector
 from databases.mongodb.models.detectorWrapper import DetectorWrapper
 from databases.mongodb.models.condition import Condition
@@ -98,7 +97,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         try:
             detector_wrapper = DetectorWrapper.objects().get(name=detector_names[0])
             return detector_wrapper
-        except Exception as e:
+        except DoesNotExist as e:
             raise ValueError(
                 "The detector wrapper ",
                 detector_names[0],
@@ -113,7 +112,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         """
         try:
             subdetector = detector.subdetectors.get(name=sub_name)
-        except Exception:
+        except DoesNotExist:
             print("Subdetector " + sub_name + " does not exist")
             return None
 
@@ -166,12 +165,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         """
         try:
             wrapper = self.__get_wrapper(wrapper_id)
-        except Exception:
-            # evh
-            print("The detector '", wrapper_id, "' does not exist in the database")
-            # raise ValueError("The detector '",
-            #                 wrapper_id,
-            #                 "' does not exist in the database")
+        except Exception as e:
+            raise ValueError(
+                "The detector '", wrapper_id, "' does not exist in the database"
+            ) from e
         wrapper.delete()
 
     def list_detectors(self, parent_id=None):
@@ -239,7 +236,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector_id = sanitize_path(detector_id)
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except DoesNotExist as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -910,7 +907,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
