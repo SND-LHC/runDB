@@ -1,4 +1,5 @@
 """This module implements a MongoDB storage back-end adapter."""
+import atexit
 
 from json import loads
 from datetime import datetime
@@ -67,6 +68,7 @@ class MongoToCDBAPIAdapter(APIInterface):
                                 to the Conditions Database.
         """
         self.__db_connection = get_connection(connection_dict)
+        atexit.register(disconnect)
 
     def __delete_db(self, db_name):
         """Delete the specified database.
@@ -1570,7 +1572,3 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If detector_id does not exist.
         """
-
-    def __del__(self):
-        """Destruct."""
-        disconnect()
