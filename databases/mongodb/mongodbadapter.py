@@ -293,7 +293,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             fill = self.__get_fill(fill_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested fill " + fill_id + " does not exist."
             ) from e
@@ -325,7 +325,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             run = self.__get_run(run_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError("The requested run " + run_id + " does not exist.") from e
 
         # Convert the internal Run object to a generic Python dict type
@@ -355,7 +355,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             file = self.__get_file(file_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError("The requested file" + file_id + " does not exist.") from e
 
         # Convert the internal File object to a generic Python dict type
@@ -385,7 +385,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             emulsion = self.__get_file(emulsion_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested emulsion" + emulsion_id + " does not exist."
             ) from e
@@ -417,7 +417,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             brick = self.__get_file(brick_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested brick" + brick_id + " does not exist."
             ) from e
@@ -619,9 +619,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         try:
             fill = self.__get_fill(fill_id)
             fill.remove()
-        except Exception:
-            # evh
-            print("The Fill '", fill_id, "' does not exist in the database")
+        except ValueError as e:
+            raise ValueError(
+                "The Fill '", fill_id, "' does not exist in the database"
+            ) from e
 
     def add_detector(self, name, parent_id=None):
         """Add a new detector to the database.
@@ -676,7 +677,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
             try:
                 detector_wrapper = self.__get_wrapper(detector_names[0])
-            except Exception as e:
+            except ValueError as e:
                 raise ValueError(
                     "The detector '",
                     detector_names[0],
@@ -687,7 +688,7 @@ class MongoToCDBAPIAdapter(APIInterface):
                 detector = self.__get_detector(detector_wrapper, parent_id)
                 added_detector = Detector()
                 added_detector.name = name
-            except Exception as e:
+            except ValueError as e:
                 raise ValueError(
                     "The detector with id '" + parent_id + "' does not exist"
                 ) from e
@@ -723,7 +724,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -733,7 +734,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         if len(detector_names) < 2:
             try:
                 self.__remove_wrapper(detector_names[0])
-            except Exception as e:
+            except ValueError as e:
                 raise ValueError(
                     "The detector '",
                     detector_names[0],
@@ -852,7 +853,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector with the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -860,7 +861,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -914,7 +915,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -962,7 +963,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -970,7 +971,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -1018,7 +1019,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -1026,7 +1027,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -1104,7 +1105,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -1112,7 +1113,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -1178,14 +1179,14 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
 
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -1244,7 +1245,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -1252,7 +1253,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
@@ -1336,7 +1337,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Get the detector of the specified detector_id
         try:
             detector_wrapper = self.__get_wrapper(detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The detector '", detector_id, "' does not exist in the database"
             ) from e
@@ -1344,7 +1345,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         detector = None
         try:
             detector = self.__get_detector(detector_wrapper, detector_id)
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(
                 "The requested detector '" + detector_id + "' does not exist."
             ) from e
