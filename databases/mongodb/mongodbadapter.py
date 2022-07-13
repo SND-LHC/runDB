@@ -444,7 +444,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Converting all dates given as a String to a datetime object
         if validate_str(start_time):
             start_time = convert_date(start_time)
-        elif validate_datetime(valid_until):
+        elif validate_datetime(start_time):
             # Strip off the microseconds
             start_time = start_time.replace(microsecond=0)
         if validate_str(end_time):
