@@ -26,6 +26,7 @@ from databases.mongodb.helpers import (
     validate_str,
     convert_date,
     split_detector_names,
+    create_uri,
 )
 
 # from databases.mongodb.models.emulsion import Emulsion
@@ -48,14 +49,8 @@ __status__ = "Prototype"
 
 def get_connection(connection_dict):
     """Create a connection to a MongoDB server and return the connection handle."""
-    user = connection_dict["user"]
-    password = connection_dict["password"]
-    db = connection_dict["db_name"]
-    host = connection_dict["host"]
-    port = connection_dict["port"]
     # For some reason authentication only works using URI
-    uri = f"mongodb://{user}:{password}@{host}:{port}/{db}"
-    return connect(host=uri)
+    return connect(host=create_uri(connection_dict))
 
 
 @final

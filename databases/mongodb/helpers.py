@@ -117,3 +117,13 @@ def convert_date(input_date_string):
             "representing the year. "
         )
     return datetime_value
+
+
+def create_uri(connection_dict):
+    """Create URI for mongo using connection dict."""
+    user = connection_dict["user"]
+    password = connection_dict["password"]
+    db = connection_dict["db_name"]
+    host = connection_dict["host"]
+    port = connection_dict["port"]
+    return f"mongodb://{user}:{password}@{host}:{port}/{db}"
