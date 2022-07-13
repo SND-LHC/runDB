@@ -269,6 +269,10 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         return fill_list
 
+    def __get_fill(self, fill_id):
+        """Get fill by id."""
+        return Fill.objects().get(fill_id=fill_id)
+
     def get_fill(self, fill_id):
         """Return a fill dictionary.
 
@@ -457,7 +461,7 @@ class MongoToCDBAPIAdapter(APIInterface):
             raise ValueError("Incorrect validity interval")
 
         fill = Fill()
-        fill.fill_id = fill_id
+        fill.fill_id = fill_id  # TODO Enforce uniqueness of fill_id?
         fill.start_time = start_time
         fill.end_time = end_time
         fill.save()
@@ -618,7 +622,7 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         try:
             fill = self.__get_fill(fill_id)
-            fill.remove()
+            fill.delete()
         except ValueError as e:
             raise ValueError(
                 "The Fill '", fill_id, "' does not exist in the database"

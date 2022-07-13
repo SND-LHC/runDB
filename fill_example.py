@@ -23,3 +23,7 @@ fill_id = "ab2cx4"
 start_time = datetime.datetime.now() - datetime.timedelta(hours=1)
 end_time = datetime.datetime.now() + datetime.timedelta(hours=1)
 runDB.add_fill(fill_id=fill_id, start_time=start_time, end_time=end_time)
+
+fill = runDB.get_fill(fill_id=fill_id)
+print(fill)
+fill = runDB.remove_fill(fill_id=fill_id)
