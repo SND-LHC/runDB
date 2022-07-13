@@ -104,3 +104,4 @@ conditionsDB.update_condition_by_name_and_tag(
 # EXECUTE WITH CARE: Removes a subdetector including all of it's values from the database
 # This function removes subdetector: "subdetector1" of detector: "detector3" and all of it's values from the database
 conditionsDB.remove_detector("detector3/subdetector1")
+conditionsDB.remove_detector("detector3")

@@ -1,6 +1,4 @@
-"""
-This is an example file to demonstrate how the conditionsDatabase API works
-"""
+"""This is an example file to demonstrate how the conditionsDatabase API works."""
 import datetime
 from factory import APIFactory
 
