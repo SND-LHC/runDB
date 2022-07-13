@@ -251,7 +251,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal Detector object to a generic Python dict type
         return loads(detector.to_json())
 
-    def list_fills(self, start_date, end_date):
+    def list_fills(self, start_date=None, end_date=None):
         """Return a list with fill numbers of all fills in the database.
 
         @param  start_date:     Timestamp specifying a start of a date/time range for which
@@ -265,9 +265,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:
         @retval List:           A list with (string) fill numbers
         """
-        fill_list = []
-
-        return fill_list
+        fills = Fill.objects().all()
+        for fill in fills:
+            print(fill.fill_id)
+        return [fill.fill_id for fill in fills]
 
     def __get_fill(self, fill_id):
         """Get fill by id."""

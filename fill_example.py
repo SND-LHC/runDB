@@ -19,11 +19,15 @@ api_factory = APIFactory()
 
 runDB = api_factory.construct_DB_API("config.yml")
 
-fill_id = "ab2cx4"
+fill_id1 = "ab2cx4"
+fill_id2 = "ab2cx5"
 start_time = datetime.datetime.now() - datetime.timedelta(hours=1)
 end_time = datetime.datetime.now() + datetime.timedelta(hours=1)
-runDB.add_fill(fill_id=fill_id, start_time=start_time, end_time=end_time)
+runDB.add_fill(fill_id=fill_id1, start_time=start_time, end_time=end_time)
+runDB.add_fill(fill_id=fill_id2, start_time=start_time, end_time=end_time)
 
-fill = runDB.get_fill(fill_id=fill_id)
+fill = runDB.get_fill(fill_id=fill_id1)
 print(fill)
-fill = runDB.remove_fill(fill_id=fill_id)
+runDB.list_fills()
+runDB.remove_fill(fill_id=fill_id1)
+runDB.remove_fill(fill_id=fill_id2)
