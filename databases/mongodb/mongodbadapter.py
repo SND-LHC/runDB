@@ -433,7 +433,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         """Add a new fill to the database.
 
         @param  fill_id:        String specifying the fill number. Must
-                                be unique. Must not contain a forward slash (i.e. /).
+                                be unique. Must not contain a forward slash (i.e. /). TODO make int?
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
         @param  end_time:       (optional) Timestamp specifying the end of a date/time range
@@ -443,7 +443,12 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:
         """
         if fill_id == "":
-            raise TypeError("Fill_id should not be empty")
+            raise TypeError("fill_id should not be empty")
+        try:
+            fill = self.__get_fill(fill_id)
+            raise ValueError(f"Fill with {fill_id=} already exists. Abort.")
+        except DoesNotExist:
+            pass
 
         # Converting all dates given as a String to a datetime object
         if validate_str(start_time):

@@ -25,6 +25,10 @@ start_time = datetime.datetime.now() - datetime.timedelta(hours=1)
 end_time = datetime.datetime.now() + datetime.timedelta(hours=1)
 runDB.add_fill(fill_id=fill_id1, start_time=start_time, end_time=end_time)
 runDB.add_fill(fill_id=fill_id2, start_time=start_time, end_time=end_time)
+try:
+    runDB.add_fill(fill_id=fill_id2, start_time=start_time, end_time=end_time)
+except ValueError:
+    pass
 
 fill = runDB.get_fill(fill_id=fill_id1)
 print(fill)
