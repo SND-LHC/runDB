@@ -270,7 +270,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         return [fill.fill_id for fill in fills]
 
     def __get_fill(self, fill_id):
-        """Get fill by id."""
+        """Get fill by id.
+
+        TODO document
+        """
         return Fill.objects().get(fill_id=fill_id)
 
     def get_fill(self, fill_id):
@@ -334,6 +337,13 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         # Convert the internal Run object to a generic Python dict type
         return loads(run.to_json())
+
+    def __get_run(self, run_id):
+        """Get run by id.
+
+        TODO document
+        """
+        return Run.objects().get(run_id=run_id)
 
     def get_file(self, file_id):
         """Return a file dictionary.
@@ -483,7 +493,7 @@ class MongoToCDBAPIAdapter(APIInterface):
                                 If not specified then we will query for validity on the start_date.
                                 Can be of type String or datetime
         @throw  TypeError:  If input type is not as specified.
-        @throw  ValueError:
+        @throw  ValueError: If fill with fill_id does not exist
         """
         if run_id == "" or fill_id == "":
             raise TypeError("Run_id or Fill_id should not be empty")
@@ -491,7 +501,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Converting all dates given as a String to a datetime object
         if validate_str(start_time):
             start_time = convert_date(start_time)
-        elif validate_datetime(valid_until):
+        elif validate_datetime(start_time):
             # Strip off the microseconds
             start_time = start_time.replace(microsecond=0)
         if validate_str(end_time):
@@ -503,12 +513,15 @@ class MongoToCDBAPIAdapter(APIInterface):
         if start_time > end_time:
             raise ValueError("Incorrect validity interval")
 
+        # TODO make sure run time window contained in fill?
+
+        try:
+            self.__get_fill(fill_id)
+        except DoesNotExist as e:
+            raise ValueError("Fill with fill_id " + fill_id + " does not exist.") from e
+
         run = Run()
-
         run.run_id = run_id
-        if get_fill(fill_id) == "":
-            raise TypeError("Fill_id " + fill_id + " does not exist.")
-
         run.fill_id = fill_id
         run.start_time = start_time
         run.end_time = end_time
@@ -521,6 +534,23 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If run_id does not exist.
         """
+        if not validate_str(run_id):
+            raise TypeError(
+                "Please pass the correct type of input: fill_id should be String"
+            )
+
+        if run_id == "":
+            raise ValueError(
+                "Please provide the correct input for fill_id: fill_id cannot be an empty String"
+            )
+
+        try:
+            run = self.__get_run(run_id)
+            run.delete()
+        except ValueError as e:
+            raise ValueError(
+                "The run '", run_id, "' does not exist in the database"
+            ) from e
 
     def list_runs(self, fill_id=None, start_time=None, end_time=None):
         """Return a list with runnumbers of all the runs in the database.

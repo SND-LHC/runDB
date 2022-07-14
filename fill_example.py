@@ -1,15 +1,12 @@
-"""List detectors.
+"""Test fill functionality.
 
 This is an example file to demonstrate how the conditionsDatabase API works
-It reads the geometry file and adds subdetectors with their positions to the condDB
-Takes about 5 mins to fill the condDB
 """
 from argparse import ArgumentParser
 import datetime
 from factory import APIFactory
 
 parser = ArgumentParser()
-# parser.add_argument("-l", "--level", help="TODO", required=True, type=int)
 options = parser.parse_args()
 
 # Instantiate an API factory
