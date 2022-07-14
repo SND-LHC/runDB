@@ -1426,16 +1426,22 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw ValueError:         If detector_id does not exist.
         """
         fill = self.__get_fill(fill_id)
-        print(fill.attributes)
         # TODO check whether attribute exists
-        # TODO add or update attribute (or refuse?)
-        # Add a new attribute
-        attribute = Attribute()
-        attribute.name = name
-        attribute.type = attribute_type
-        attribute.values = values
-        fill.attributes.append(attribute)
-        fill.save()
+        try:
+            fill.attributes.get(name=name)
+            print(
+                "WARNING: Attribute already exists, nothing done. Please update the attribute using TK"
+            )
+            # TODO add option to update?
+            return
+        except DoesNotExist:
+            # Add a new attribute
+            attribute = Attribute()
+            attribute.name = name
+            attribute.type = attribute_type
+            attribute.values = values
+            fill.attributes.append(attribute)
+            fill.save()
 
     def add_attributes_to_fill(
         self,
