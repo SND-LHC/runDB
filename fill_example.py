@@ -29,5 +29,12 @@ runDB.add_fill(fill_id=fill_id2, start_time=start_time, end_time=end_time)
 fill = runDB.get_fill(fill_id=fill_id1)
 print(fill)
 runDB.list_fills()
+runDB.add_attributes_to_fill(fill_id=fill_id1, energy="6.8 TeV")
+runDB.add_attributes_to_fill(
+    fill_id=fill_id1, filling_scheme="single_10b_3_0_0_pilots_7nc_1c"
+)
+runDB.add_attributes_to_fill(fill_id=fill_id1, B1=1402, B2=1402)
+fill = runDB.get_fill(fill_id=fill_id1)
+print(fill)
 runDB.remove_fill(fill_id=fill_id1)
 runDB.remove_fill(fill_id=fill_id2)

@@ -17,6 +17,7 @@ from databases.mongodb.models.condition import Condition
 from databases.mongodb.models.fill import Fill
 from databases.mongodb.models.run import Run
 from databases.mongodb.models.file import File
+from databases.mongodb.models.attribute import Attribute
 from databases.mongodb.helpers import (
     sanitize_path,
     sanitize_str,
@@ -266,8 +267,6 @@ class MongoToCDBAPIAdapter(APIInterface):
         @retval List:           A list with (string) fill numbers
         """
         fills = Fill.objects().all()
-        for fill in fills:
-            print(fill.fill_id)
         return [fill.fill_id for fill in fills]
 
     def __get_fill(self, fill_id):
@@ -1416,6 +1415,28 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw ValueError:         If detector_id does not exist.
         """
 
+    def __add_attributes_to_fill(self, fill_id, name, attribute_type, values):
+        """Add general attribute to fill.
+
+        @param fill_id:           String identifying the fill
+        @param name: TODO
+        @param attribute_type: TODO
+        @param values: TODO
+        @throw TypeError:          If input type is not as specified.
+        @throw ValueError:         If detector_id does not exist.
+        """
+        fill = self.__get_fill(fill_id)
+        print(fill.attributes)
+        # TODO check whether attribute exists
+        # TODO add or update attribute (or refuse?)
+        # Add a new attribute
+        attribute = Attribute()
+        attribute.name = name
+        attribute.type = attribute_type
+        attribute.values = values
+        fill.attributes.append(attribute)
+        fill.save()
+
     def add_attributes_to_fill(
         self,
         fill_id,
@@ -1428,16 +1449,56 @@ class MongoToCDBAPIAdapter(APIInterface):
     ):
         """Add attributes to a fill.
 
-        @param  fill_id:           String identifying the fill
-        @param  luminosity:        String specifying the integrated luminosity delivered by the LHC during the fill
-        @param  filling_scheme:    String specifying the filling scheme, e.g. "single_10b_3_0_0_pilots_7nc_1c"
-        @param  energy:            String specifying the energy e.g. "450GeV", "3.5TeV"
-        @param  colliding_bunches: String specifying the number of colliding bunches at IP1
-        @param  B1:                String specifying B1
-        @param  B2:                String specifying B2
+        @param fill_id:           String identifying the fill
+        @param luminosity:        String specifying the integrated luminosity delivered by the LHC during the fill
+        @param filling_scheme:    String specifying the filling scheme, e.g. "single_10b_3_0_0_pilots_7nc_1c"
+        @param energy:            String specifying the energy e.g. "450GeV", "3.5TeV"
+        @param colliding_bunches: String specifying the number of colliding bunches at IP1
+        @param B1:                String specifying B1
+        @param B2:                String specifying B2
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If detector_id does not exist.
         """
+        # TODO Test how much speed is gained by doing all at once
+        if not (
+            luminosity or filling_scheme or energy or colliding_bunches or B1 or B2
+        ):
+            print("WARNING: no attribute specified. Nothing done.")
+        if luminosity:
+            # TODO validate luminosity?
+            self.__add_attributes_to_fill(
+                fill_id, name="luminosity", attribute_type="str", values=luminosity
+            )
+        if filling_scheme:
+            self.__add_attributes_to_fill(
+                fill_id,
+                name="filling_scheme",
+                attribute_type="str",
+                values=filling_scheme,
+            )
+        if energy:
+            # TODO validate energy?
+            self.__add_attributes_to_fill(
+                fill_id, name="energy", attribute_type="str", values=energy
+            )
+        if colliding_bunches:
+            # TODO validate colliding bunches?
+            self.__add_attributes_to_fill(
+                fill_id,
+                name="colliding_bunches",
+                attribute_type="str",
+                values=colliding_bunches,
+            )
+        if B1:
+            # TODO validate B1? String or int?
+            self.__add_attributes_to_fill(
+                fill_id, name="B1", attribute_type="int", values=B1
+            )
+        if B2:
+            # TODO validate B2?
+            self.__add_attributes_to_fill(
+                fill_id, name="B2", attribute_type="int", values=B2
+            )
 
     def add_attributes_to_run(
         self,
