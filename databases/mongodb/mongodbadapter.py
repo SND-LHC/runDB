@@ -579,6 +579,8 @@ class MongoToCDBAPIAdapter(APIInterface):
     def list_runs(self, fill_id=None, start_time=None, end_time=None):
         """Return a list with runnumbers of all the runs in the database.
 
+        Optionally, filter runs by fill_id or time window.
+
         @param fill_id:     (optional) String identifying the fill to which the runs belong
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
@@ -590,7 +592,30 @@ class MongoToCDBAPIAdapter(APIInterface):
         @retval List:           A list with (string) runs
         """
         runs = Run.objects().all()
-        return [run.run_id for run in runs if not fill_id or run.fill_id == fill_id]
+        if start_time:
+            # Converting all dates given as a String to a datetime object
+            if validate_str(start_time):
+                start_time = convert_date(start_time)
+            elif validate_datetime(start_time):
+                # Strip off the microseconds
+                start_time = start_time.replace(microsecond=0)
+        if start_time and end_time:
+            if validate_str(end_time):
+                end_time = convert_date(end_time)
+            elif validate_datetime(end_time):
+                # Strip off the microseconds
+                end_time = end_time.replace(microsecond=0)
+
+            if start_time > end_time:
+                raise ValueError("Incorrect validity interval")
+
+        return [
+            run.run_id
+            for run in runs
+            if (not fill_id or run.fill_id == fill_id)
+            and (not start_time or start_time <= run.start_time)
+            and (not (start_time and end_time) or (run.end_time <= end_time))
+        ]
 
     def add_file(self, run_id, file_id, start_time, end_time):
         """Add a new file to the database.
