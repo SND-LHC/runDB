@@ -565,6 +565,8 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:     If fill_id does not exist.
         @retval List:           A list with (string) runs
         """
+        runs = Run.objects().all()
+        return [run.run_id for run in runs if not fill_id or run.fill_id == fill_id]
 
     def add_file(self, run_id, file_id, start_time, end_time):
         """Add a new file to the database.

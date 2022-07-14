@@ -27,5 +27,8 @@ runDB.add_run(
     run_id=run_id, fill_id=fill_id, start_time=start_time_fill, end_time=end_time_fill
 )
 print(runDB.get_run(run_id=run_id))
+print(runDB.list_runs())
+print(runDB.list_runs(fill_id=fill_id))
+print(runDB.list_runs(fill_id="145"))
 runDB.remove_run(run_id=run_id)
 runDB.remove_fill(fill_id=fill_id)
