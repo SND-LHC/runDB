@@ -252,8 +252,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal Detector object to a generic Python dict type
         return loads(detector.to_json())
 
-    def list_fills(self, start_date=None, end_date=None):
+    def list_fills(self, start_time=None, end_time=None):
         """Return a list with fill numbers of all fills in the database.
+
+        Optionally filter fills to be within given time-range (or after start_time if only one given)
 
         @param  start_date:     Timestamp specifying a start of a date/time range for which
                                 conditions must be valid.
@@ -267,7 +269,29 @@ class MongoToCDBAPIAdapter(APIInterface):
         @retval List:           A list with (string) fill numbers
         """
         fills = Fill.objects().all()
-        return [fill.fill_id for fill in fills]
+        if start_time:
+            # Converting all dates given as a String to a datetime object
+            if validate_str(start_time):
+                start_time = convert_date(start_time)
+            elif validate_datetime(start_time):
+                # Strip off the microseconds
+                start_time = start_time.replace(microsecond=0)
+        if start_time and end_time:
+            if validate_str(end_time):
+                end_time = convert_date(end_time)
+            elif validate_datetime(end_time):
+                # Strip off the microseconds
+                end_time = end_time.replace(microsecond=0)
+
+            if start_time > end_time:
+                raise ValueError("Incorrect validity interval")
+
+        return [
+            fill.fill_id
+            for fill in fills
+            if (not start_time or start_time <= fill.start_time)
+            and (not (start_time and end_time) or (fill.end_time <= end_time))
+        ]
 
     def __get_fill(self, fill_id):
         """Get fill by id.

@@ -6,7 +6,6 @@ from mongoengine import (
     ComplexDateTimeField,
 )
 
-# evh
 from databases.mongodb.models.attribute import Attribute
 
 

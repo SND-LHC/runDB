@@ -31,7 +31,10 @@ except ValueError:
 
 fill = runDB.get_fill(fill_id=fill_id1)
 print(fill)
-runDB.list_fills()
+print(runDB.list_fills())
+print(runDB.list_fills(start_time=start_time_fill, end_time=end_time_fill))
+print(runDB.list_fills(start_time=start_time_fill))
+print(runDB.list_fills(start_time=end_time_fill))
 runDB.add_attributes_to_fill(fill_id=fill_id1, energy="6.8 TeV")
 runDB.add_attributes_to_fill(fill_id=fill_id1, energy="4.8 TeV")
 runDB.add_attributes_to_fill(
