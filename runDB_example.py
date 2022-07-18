@@ -63,6 +63,9 @@ print(runDB.list_runs(fill_id=fill_id2))
 print(runDB.list_runs(start_time=start_time_fill, end_time=end_time_fill))
 print(runDB.list_runs(start_time=start_time_fill))
 print(runDB.list_runs(start_time=end_time_fill))
+# Test adding attributes to a run
+runDB.add_attributes_to_run(run_id=run_id, nb_events=13)
+print(runDB.get_run(run_id=run_id))
 
 # Clean up DB
 runDB.remove_run(run_id=run_id)

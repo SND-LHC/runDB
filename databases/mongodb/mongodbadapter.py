@@ -542,7 +542,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @param attribute_type: TODO
         @param values: TODO
         @throw TypeError:          If input type is not as specified.
-        @throw ValueError:         If detector_id does not exist.
+        @throw ValueError:         If fill_id does not exist.
         """
         fill = self.__get_fill(fill_id)
         # TODO check whether attribute exists
@@ -774,6 +774,34 @@ class MongoToCDBAPIAdapter(APIInterface):
             and (not (start_time and end_time) or (run.end_time <= end_time))
         ]
 
+    def __add_attributes_to_run(self, run_id, name, attribute_type, values):
+        """Add general attribute to run.
+
+        @param run_id:           String identifying the fill
+        @param name: TODO
+        @param attribute_type: TODO
+        @param values: TODO
+        @throw TypeError:          If input type is not as specified.
+        @throw ValueError:         If run_id does not exist.
+        """
+        run = self.__get_run(run_id)
+        # TODO check whether attribute exists
+        try:
+            run.attributes.get(name=name)
+            print(
+                "WARNING: Attribute already exists, nothing done. Please update the attribute using TK"
+            )
+            # TODO add option to update?
+            return
+        except DoesNotExist:
+            # Add a new attribute
+            attribute = Attribute()
+            attribute.name = name
+            attribute.type = attribute_type
+            attribute.values = values
+            run.attributes.append(attribute)
+            run.save()
+
     def add_attributes_to_run(
         self,
         run_id,
@@ -798,6 +826,63 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If detector_id does not exist.
         """
+        if not (
+            luminosity
+            or nb_events
+            or runtype
+            or beam_status
+            or status
+            or HV
+            or eor_status
+        ):
+            print("WARNING: no attribute specified. Nothing done.")
+        if luminosity:
+            # TODO validate luminosity?
+            self.__add_attributes_to_run(
+                run_id, name="luminosity", attribute_type="str", values=luminosity
+            )
+        if nb_events:
+            self.__add_attributes_to_run(
+                run_id,
+                name="number_of_events",
+                attribute_type="int",  # String or Int?
+                values=nb_events,
+            )
+        if runtype:
+            self.__add_attributes_to_run(
+                run_id,
+                name="runtype",
+                attribute_type="str",
+                values=runtype,
+            )
+        if beam_status:
+            self.__add_attributes_to_run(
+                run_id,
+                name="beam_status",
+                attribute_type="str",
+                values=beam_status,
+            )
+        if status:
+            self.__add_attributes_to_run(
+                run_id,
+                name="status",
+                attribute_type="str",
+                values=status,
+            )
+        if HV:
+            self.__add_attributes_to_run(
+                run_id,
+                name="HV",
+                attribute_type="str",
+                values=HV,
+            )
+        if eor_status:
+            self.__add_attributes_to_run(
+                run_id,
+                name="eor_status",
+                attribute_type="str",
+                values=eor_status,
+            )
 
     def get_file(self, file_id):
         """Return a file dictionary.
@@ -865,15 +950,15 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         file.file_id = file_id
 
-        if get_run(run_id) == "":
+        if self.get_run(run_id) == "":
             raise TypeError("Run_id " + run_id + " does not exist.")
 
         file.run_id = run_id
 
-        if get_run(fill_id) == "":
-            raise TypeError("Fill_id " + fill_id + " does not exist.")
+        # if self.get_run(fill_id) == "":
+        #     raise TypeError("Fill_id " + fill_id + " does not exist.")
 
-        file.fill_id = fill_id
+        # file.fill_id = fill_id
         file.start_time = start_time
         file.end_time = end_time
         file.save()
