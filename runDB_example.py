@@ -16,8 +16,8 @@ api_factory = APIFactory()
 
 runDB = api_factory.construct_DB_API("config.yml")
 
-fill_id1 = "ab2cx4"
-fill_id2 = "ab2cx5"
+fill_id1 = "42"
+fill_id2 = "17"
 start_time_fill = datetime.datetime.now() - datetime.timedelta(hours=1)
 end_time_fill = datetime.datetime.now() + datetime.timedelta(hours=1)
 
@@ -25,24 +25,29 @@ end_time_fill = datetime.datetime.now() + datetime.timedelta(hours=1)
 runDB.add_fill(fill_id=fill_id1, start_time=start_time_fill, end_time=end_time_fill)
 runDB.add_fill(fill_id=fill_id2, start_time=start_time_fill, end_time=end_time_fill)
 try:
+    # IDs have to be unique. The runDB will refuse adding a second fill with the same ID
     runDB.add_fill(fill_id=fill_id2, start_time=start_time_fill, end_time=end_time_fill)
 except ValueError:
     pass
 
-fill = runDB.get_fill(fill_id=fill_id1)
-print(fill)
+# Get a single fill
+print(runDB.get_fill(fill_id=fill_id1))
+# List all fills (optionally filtering by time window)
 print(runDB.list_fills())
 print(runDB.list_fills(start_time=start_time_fill, end_time=end_time_fill))
 print(runDB.list_fills(start_time=start_time_fill))
 print(runDB.list_fills(start_time=end_time_fill))
+
+# Add attributes to a fill
 runDB.add_attributes_to_fill(fill_id=fill_id1, energy="6.8 TeV")
+# runDB will print a warning and refuse overwriting existing attribute
 runDB.add_attributes_to_fill(fill_id=fill_id1, energy="4.8 TeV")
 runDB.add_attributes_to_fill(
     fill_id=fill_id1, filling_scheme="single_10b_3_0_0_pilots_7nc_1c"
 )
 runDB.add_attributes_to_fill(fill_id=fill_id1, B1=1402, B2=1402)
-fill = runDB.get_fill(fill_id=fill_id1)
-print(fill)
+# Result of added attributes
+print(runDB.get_fill(fill_id=fill_id1))
 
 # Test run functionality
 run_id = "1234"
@@ -58,6 +63,8 @@ print(runDB.list_runs(fill_id=fill_id2))
 print(runDB.list_runs(start_time=start_time_fill, end_time=end_time_fill))
 print(runDB.list_runs(start_time=start_time_fill))
 print(runDB.list_runs(start_time=end_time_fill))
+
+# Clean up DB
 runDB.remove_run(run_id=run_id)
 runDB.remove_fill(fill_id=fill_id1)
 runDB.remove_fill(fill_id=fill_id2)
