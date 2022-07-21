@@ -433,8 +433,7 @@ class MongoToCDBAPIAdapter(APIInterface):
                                 be unique. Must not contain a forward slash (i.e. /). TODO make int?
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
-        @param  end_time:       (optional) Timestamp specifying the end of a date/time range
-                                If not specified then we will query for validity on the start_time.
+        @param  end_time:       Timestamp specifying the end of a date/time range
                                 Can be of type String or datetime
         @param  attributes:     Dict of attributes to be added to fill
         @throw  TypeError:  If input type is not as specified.
@@ -637,7 +636,8 @@ class MongoToCDBAPIAdapter(APIInterface):
     def __get_run(self, run_id):
         """Get run by id.
 
-        TODO document
+        @param  run_id:         String identifying the run to retrieve
+        @retval Run:            Run object corresponding to query
         """
         return Run.objects().get(run_id=run_id)
 
@@ -671,17 +671,17 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal Run object to a generic Python dict type
         return loads(run.to_json())
 
-    def add_run(self, run_id, fill_id, start_time, end_time):
+    def add_run(self, run_id, fill_id, start_time, end_time, **attributes):
         """Add a new run to the database.
 
         @param  run_id:         String specifying the run number. Must
                                 be unique. Must not contain a forward slash (i.e. /).
         @param  fill_id:        String specifying the fill number. Must exist in the database.
-        @param  start_time:     (optional) Timestamp specifying a start of a date/time range
+        @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
-        @param  end_time:       (optional) Timestamp specifying the end of a date/time range
-                                If not specified then we will query for validity on the start_date.
+        @param  end_time:       Timestamp specifying the end of a date/time range
                                 Can be of type String or datetime
+        @param  attributes:     Dict of attributes to be added to fill
         @throw  TypeError:  If input type is not as specified.
         @throw  ValueError: If fill with fill_id does not exist
         """
@@ -703,12 +703,17 @@ class MongoToCDBAPIAdapter(APIInterface):
         if start_time > end_time:
             raise ValueError("Incorrect validity interval")
 
-        # TODO make sure run time window contained in fill?
-
         try:
-            self.__get_fill(fill_id)
+            fill = self.__get_fill(fill_id)
         except DoesNotExist as e:
             raise ValueError("Fill with fill_id " + fill_id + " does not exist.") from e
+
+        if fill.start_time > start_time:
+            raise ValueError("Start of run is before start of fill.")
+        if fill.end_time < start_time:
+            raise ValueError("Start of run is after end of fill.")
+        if end_time > fill.end_time:
+            raise ValueError("End of run is after end of fill.")
 
         run = Run()
         run.run_id = run_id
@@ -716,6 +721,15 @@ class MongoToCDBAPIAdapter(APIInterface):
         run.start_time = start_time
         run.end_time = end_time
         run.save()
+
+        if attributes:
+            try:
+                self.add_attributes_to_run(run_id, **attributes)
+            except TypeError as e:
+                raise TypeError(
+                    "One of the passed attributes was not known."
+                    "The run was successfully added, but please check the attributes."
+                ) from e
 
     def remove_run(self, run_id):
         """Remove a run from the database.
@@ -786,15 +800,14 @@ class MongoToCDBAPIAdapter(APIInterface):
     def __add_attributes_to_run(self, run_id, name, attribute_type, values):
         """Add general attribute to run.
 
-        @param run_id:           String identifying the fill
-        @param name: TODO
-        @param attribute_type: TODO
-        @param values: TODO
+        @param run_id:             String identifying the fill
+        @param name:               Attribute name
+        @param attribute_type:     Attribute type
+        @param values:             Attribute value(s)
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If run_id does not exist.
         """
         run = self.__get_run(run_id)
-        # TODO check whether attribute exists
         try:
             run.attributes.get(name=name)
             print(

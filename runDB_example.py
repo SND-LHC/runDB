@@ -69,7 +69,11 @@ run_id = "1234"
 start_time_run = datetime.datetime.now() - datetime.timedelta(hours=0.5)
 end_time_run = datetime.datetime.now() + datetime.timedelta(hours=0.5)
 runDB.add_run(
-    run_id=run_id, fill_id=fill_id1, start_time=start_time_fill, end_time=end_time_fill
+    run_id=run_id,
+    fill_id=fill_id1,
+    start_time=start_time_fill,
+    end_time=end_time_fill,
+    eor_status="OK",
 )
 print(runDB.get_run(run_id=run_id))
 print(runDB.list_runs())
