@@ -95,8 +95,18 @@ runDB.add_file(
     run_id=run_id,
     start_time=start_time_fill,
     end_time=end_time_fill,
+    size=5,
 )
 print(runDB.get_file(file_id=file_id))
+print(runDB.list_files())
+print(runDB.list_files(run_id=run_id))
+print(runDB.list_files(start_time=start_time_fill, end_time=end_time_fill))
+print(runDB.list_files(start_time=start_time_fill))
+print(runDB.list_files(start_time=end_time_fill))
+runDB.add_attributes_to_file(file_id=file_id, nb_events=13)
+print(runDB.get_file(file_id=file_id))
+for run_id in runDB.list_runs(fill_id=fill_id1):
+    print(runDB.list_files(run_id=run_id))
 runDB.remove_file(file_id=file_id)
 
 # Clean up DB

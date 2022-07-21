@@ -808,7 +808,7 @@ class MongoToCDBAPIAdapter(APIInterface):
     def __add_attributes_to_run(self, run_id, name, attribute_type, values):
         """Add general attribute to run.
 
-        @param run_id:             String identifying the fill
+        @param run_id:             String identifying the run
         @param name:               Attribute name
         @param attribute_type:     Attribute type
         @param values:             Attribute value(s)
@@ -954,7 +954,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal File object to a generic Python dict type
         return loads(file.to_json())
 
-    def add_file(self, run_id, file_id, start_time, end_time):
+    def add_file(self, run_id, file_id, start_time, end_time, **attributes):
         """Add a new file to the database.
 
         @param  file_id:        String specifying the file_id. Must
@@ -965,6 +965,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @param  end_time:       Timestamp specifying the end of a date/time range
                                 If not specified then we will query for validity on the start_date.
                                 Can be of type String or datetime
+        @param  attributes:     Dict of attributes to be added to file
         @throw  TypeError:  If input type is not as specified.
         @throw  ValueError:
         """
@@ -1017,6 +1018,15 @@ class MongoToCDBAPIAdapter(APIInterface):
         file.end_time = end_time
         file.save()
 
+        if attributes:
+            try:
+                self.add_attributes_to_file(file_id, **attributes)
+            except TypeError as e:
+                raise TypeError(
+                    "One of the passed attributes was not known."
+                    "The file was successfully added, but please check the attributes."
+                ) from e
+
     def remove_file(self, file_id):
         """Remove a file from the database.
 
@@ -1042,10 +1052,9 @@ class MongoToCDBAPIAdapter(APIInterface):
                 "The File '", file_id, "' does not exist in the database"
             ) from e
 
-    def list_files(self, fill_id=None, run_id=None, start_time=None, end_time=None):
+    def list_files(self, run_id=None, start_time=None, end_time=None):
         """Return a list with the paths of all the files in the database.
 
-        @param fill_id:         (optional) String identifying the fill to which the files belong
         @param run_id:          (optional) String identifying the run to which the files belong
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
@@ -1056,6 +1065,59 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:     If fill_id or run_id does not exist.
         @retval List:           A list with (string) runs
         """
+        files = File.objects().all()
+        if start_time:
+            # Converting all dates given as a String to a datetime object
+            if validate_str(start_time):
+                start_time = convert_date(start_time)
+            elif validate_datetime(start_time):
+                # Strip off the microseconds
+                start_time = start_time.replace(microsecond=0)
+        if start_time and end_time:
+            if validate_str(end_time):
+                end_time = convert_date(end_time)
+            elif validate_datetime(end_time):
+                # Strip off the microseconds
+                end_time = end_time.replace(microsecond=0)
+
+            if start_time > end_time:
+                raise ValueError("Incorrect validity interval")
+
+        # TODO feasible to filter by fill as well? probably better done by user
+        return [
+            f.file_id
+            for f in files
+            if (not run_id or f.run_id == run_id)
+            and (not start_time or start_time <= f.start_time)
+            and (not (start_time and end_time) or (f.end_time <= end_time))
+        ]
+
+    def __add_attributes_to_file(self, file_id, name, attribute_type, values):
+        """Add general attribute to file.
+
+        @param file_id:            String identifying the file
+        @param name:               Attribute name
+        @param attribute_type:     Attribute type
+        @param values:             Attribute value(s)
+        @throw TypeError:          If input type is not as specified.
+        @throw ValueError:         If file_id does not exist.
+        """
+        f = self.__get_file(file_id)
+        try:
+            f.attributes.get(name=name)
+            print(
+                "WARNING: Attribute already exists, nothing done. Please update the attribute using TK"
+            )
+            # TODO add option to update?
+            return
+        except DoesNotExist:
+            # Add a new attribute
+            attribute = Attribute()
+            attribute.name = name
+            attribute.type = attribute_type
+            attribute.values = values
+            f.attributes.append(attribute)
+            f.save()
 
     def add_attributes_to_file(
         self, file_id, path=None, luminosity=None, nb_events=None, size=None, DQ=None
@@ -1071,6 +1133,34 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If detector_id does not exist.
         """
+        if not (path or luminosity or nb_events or size or DQ):
+            print("WARNING: no attribute specified. Nothing done.")
+        if luminosity:
+            # TODO validate luminosity?
+            self.__add_attributes_to_file(
+                file_id, name="luminosity", attribute_type="str", values=luminosity
+            )
+        if nb_events:
+            self.__add_attributes_to_file(
+                file_id,
+                name="number_of_events",
+                attribute_type="int",  # String or Int?
+                values=nb_events,
+            )
+        if size:
+            self.__add_attributes_to_file(
+                file_id,
+                name="size",
+                attribute_type="int",
+                values=size,
+            )
+        if DQ:
+            self.__add_attributes_to_file(
+                file_id,
+                name="DQ",
+                attribute_type="str",
+                values=DQ,
+            )
 
     def get_emulsion(self, emulsion_id):
         """Return an emulsion dictionary.
