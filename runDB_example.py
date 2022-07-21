@@ -86,6 +86,19 @@ print(runDB.list_runs(start_time=end_time_fill))
 runDB.add_attributes_to_run(run_id=run_id, nb_events=13)
 print(runDB.get_run(run_id=run_id))
 
+# Test file functionality
+file_id = "1234"
+start_time_file = datetime.datetime.now() - datetime.timedelta(hours=0.25)
+end_time_file = datetime.datetime.now() + datetime.timedelta(hours=0.25)
+runDB.add_file(
+    file_id=file_id,
+    run_id=run_id,
+    start_time=start_time_fill,
+    end_time=end_time_fill,
+)
+print(runDB.get_file(file_id=file_id))
+runDB.remove_file(file_id=file_id)
+
 # Clean up DB
 runDB.remove_run(run_id=run_id)
 runDB.remove_fill(fill_id=fill_id1)

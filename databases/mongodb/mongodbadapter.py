@@ -390,7 +390,8 @@ class MongoToCDBAPIAdapter(APIInterface):
     def __get_fill(self, fill_id):
         """Get fill by id.
 
-        TODO document
+        @param  fill_id:         String identifying the fill to retrieve
+        @retval Fill:            Fill object corresponding to query
         """
         return Fill.objects().get(fill_id=fill_id)
 
@@ -401,8 +402,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If fill_id does not exist.
         @retval Dict:           A dictionary adhering to the following specification:
-                                Fill = { 'Fill_number': String, 'Start_time': datetime, 'End_time': datetime,
-                                             'Attributes': List of Attributes }
+                                Fill = { 'Fill_number': String,
+                                         'Start_time': datetime,
+                                         'End_time': datetime,
+                                         'Attributes': Dict of Attributes }
         """
         if fill_id == "":
             raise ValueError(
@@ -442,7 +445,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         if fill_id == "":
             raise TypeError("fill_id should not be empty")
         try:
-            fill = self.__get_fill(fill_id)
+            self.__get_fill(fill_id)
             raise ValueError(f"Fill with {fill_id=} already exists. Abort.")
         except DoesNotExist:
             pass
@@ -687,6 +690,11 @@ class MongoToCDBAPIAdapter(APIInterface):
         """
         if run_id == "" or fill_id == "":
             raise TypeError("Run_id or Fill_id should not be empty")
+        try:
+            self.__get_run(run_id)
+            raise ValueError(f"Run with {run_id=} already exists. Abort.")
+        except DoesNotExist:
+            pass
 
         # Converting all dates given as a String to a datetime object
         if validate_str(start_time):
@@ -906,6 +914,14 @@ class MongoToCDBAPIAdapter(APIInterface):
                 values=eor_status,
             )
 
+    def __get_file(self, file_id):
+        """Get file by id.
+
+        @param  file_id:         String identifying the file to retrieve
+        @retval File:            File object corresponding to query
+        """
+        return File.objects().get(file_id=file_id)
+
     def get_file(self, file_id):
         """Return a file dictionary.
 
@@ -913,8 +929,10 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If file_id does not exist.
         @retval Dict:           A dictionary adhering to the following specification:
-                                File = { 'Path': String, 'Start_time': datetime, 'End_time': datetime,
-                                            'Attributes': List of Attributes }
+                                File = { 'Path': String,
+                                         'Start_time': datetime,
+                                         'End_time': datetime,
+                                         'Attributes': List of Attributes }
         """
         if file_id == "":
             raise ValueError(
@@ -941,10 +959,10 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         @param  file_id:        String specifying the file_id. Must
                                 be unique. Must not contain a forward slash (i.e. /).
-        @param run_id:          String identifying the run to which the files belong
+        @param  run_id:         String identifying the run to which the files belong
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
-        @param  end_time:       (optional) Timestamp specifying the end of a date/time range
+        @param  end_time:       Timestamp specifying the end of a date/time range
                                 If not specified then we will query for validity on the start_date.
                                 Can be of type String or datetime
         @throw  TypeError:  If input type is not as specified.
@@ -952,6 +970,11 @@ class MongoToCDBAPIAdapter(APIInterface):
         """
         if run_id == "" or file_id == "":
             raise TypeError("Run_id or File_id should not be empty")
+        try:
+            self.__get_file(file_id)
+            raise ValueError(f"File with {file_id=} already exists. Abort.")
+        except DoesNotExist:
+            pass
 
         # Converting all dates given as a String to a datetime object
         if validate_str(start_time):
@@ -972,8 +995,17 @@ class MongoToCDBAPIAdapter(APIInterface):
 
         file.file_id = file_id
 
-        if self.get_run(run_id) == "":
-            raise TypeError("Run_id " + run_id + " does not exist.")
+        try:
+            run = self.__get_run(run_id)
+        except DoesNotExist as e:
+            raise ValueError("Run with run_id " + run_id + " does not exist.") from e
+
+        if run.start_time > start_time:
+            raise ValueError("Start of file is before start of run.")
+        if run.end_time < start_time:
+            raise ValueError("Start of file is after end of run.")
+        if end_time > run.end_time:
+            raise ValueError("End of file is after end of run.")
 
         file.run_id = run_id
 
@@ -992,6 +1024,23 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If file_id does not exist.
         """
+        if not validate_str(file_id):
+            raise TypeError(
+                "Please pass the correct type of input: file_id should be String"
+            )
+
+        if file_id == "":
+            raise ValueError(
+                "Please provide the correct input for file_id: file_id cannot be an empty String"
+            )
+
+        try:
+            f = self.__get_file(file_id)
+            f.delete()
+        except ValueError as e:
+            raise ValueError(
+                "The File '", file_id, "' does not exist in the database"
+            ) from e
 
     def list_files(self, fill_id=None, run_id=None, start_time=None, end_time=None):
         """Return a list with the paths of all the files in the database.
