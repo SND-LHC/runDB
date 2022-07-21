@@ -22,8 +22,22 @@ start_time_fill = datetime.datetime.now() - datetime.timedelta(hours=1)
 end_time_fill = datetime.datetime.now() + datetime.timedelta(hours=1)
 
 # Test fill functionality
-runDB.add_fill(fill_id=fill_id1, start_time=start_time_fill, end_time=end_time_fill)
-runDB.add_fill(fill_id=fill_id2, start_time=start_time_fill, end_time=end_time_fill)
+runDB.add_fill(
+    fill_id=fill_id1,
+    start_time=start_time_fill,
+    end_time=end_time_fill,
+    filling_scheme="some_scheme",
+)
+try:
+    runDB.add_fill(
+        fill_id=fill_id2,
+        start_time=start_time_fill,
+        end_time=end_time_fill,
+        unknown_attribute="6.8 TeV",
+    )
+except TypeError:
+    # fill successfully added, but unknown attribute addition failed
+    pass
 try:
     # IDs have to be unique. The runDB will refuse adding a second fill with the same ID
     runDB.add_fill(fill_id=fill_id2, start_time=start_time_fill, end_time=end_time_fill)
@@ -32,6 +46,7 @@ except ValueError:
 
 # Get a single fill
 print(runDB.get_fill(fill_id=fill_id1))
+print(runDB.get_fill(fill_id=fill_id2))
 # List all fills (optionally filtering by time window)
 print(runDB.list_fills())
 print(runDB.list_fills(start_time=start_time_fill, end_time=end_time_fill))

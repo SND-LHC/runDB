@@ -426,7 +426,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal Fill object to a generic Python dict type
         return loads(fill.to_json())
 
-    def add_fill(self, fill_id, start_time, end_time):
+    def add_fill(self, fill_id, start_time, end_time, **attributes):
         """Add a new fill to the database.
 
         @param  fill_id:        String specifying the fill number. Must
@@ -436,6 +436,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @param  end_time:       (optional) Timestamp specifying the end of a date/time range
                                 If not specified then we will query for validity on the start_time.
                                 Can be of type String or datetime
+        @param  attributes:     Dict of attributes to be added to fill
         @throw  TypeError:  If input type is not as specified.
         @throw  ValueError:
         """
@@ -463,10 +464,19 @@ class MongoToCDBAPIAdapter(APIInterface):
             raise ValueError("Incorrect validity interval")
 
         fill = Fill()
-        fill.fill_id = fill_id  # TODO Enforce uniqueness of fill_id?
+        fill.fill_id = fill_id
         fill.start_time = start_time
         fill.end_time = end_time
         fill.save()
+
+        if attributes:
+            try:
+                self.add_attributes_to_fill(fill_id, **attributes)
+            except TypeError as e:
+                raise TypeError(
+                    "One of the passed attributes was not known."
+                    "The fill was successfully added, but please check the attributes."
+                ) from e
 
     def remove_fill(self, fill_id):
         """Remove a fill from the database.
@@ -537,15 +547,14 @@ class MongoToCDBAPIAdapter(APIInterface):
     def __add_attributes_to_fill(self, fill_id, name, attribute_type, values):
         """Add general attribute to fill.
 
-        @param fill_id:           String identifying the fill
-        @param name: TODO
-        @param attribute_type: TODO
-        @param values: TODO
+        @param fill_id:            String identifying the fill
+        @param name:               Attribute name
+        @param attribute_type:     Attribute type
+        @param values:             Attribute value(s)
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If fill_id does not exist.
         """
         fill = self.__get_fill(fill_id)
-        # TODO check whether attribute exists
         try:
             fill.attributes.get(name=name)
             print(
