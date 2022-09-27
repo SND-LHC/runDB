@@ -443,7 +443,8 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:
         """
         if fill_id == "":
-            raise TypeError("fill_id should not be empty")
+            # raise TypeError("fill_id should not be empty")
+            print("WARNING: Fill ID empty.")
         try:
             self.__get_fill(fill_id)
             raise ValueError(f"Fill with {fill_id=} already exists. Abort.")
@@ -493,9 +494,10 @@ class MongoToCDBAPIAdapter(APIInterface):
             )
 
         if fill_id == "":
-            raise ValueError(
-                "Please provide the correct input for fill_id: fill_id cannot be an empty String"
-            )
+            # raise ValueError(
+            #     "Please provide the correct input for fill_id: fill_id cannot be an empty String"
+            # )
+            print("WARNING: Fill ID empty.")
 
         try:
             fill = self.__get_fill(fill_id)
@@ -689,7 +691,8 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError: If fill with fill_id does not exist
         """
         if run_id == "" or fill_id == "":
-            raise TypeError("Run_id or Fill_id should not be empty")
+            # raise TypeError("run_id or fill_id should not be empty")
+            print("run_id or fill_id should not be empty")
         try:
             self.__get_run(run_id)
             raise ValueError(f"Run with {run_id=} already exists. Abort.")
@@ -842,6 +845,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         status=None,
         HV=None,
         eor_status=None,
+        **additional_attributes,
     ):
         """Add attributes to a run.
 
@@ -853,6 +857,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @param  status:            List of strings specifying excluded FE boards
         @param  HV:                List of strings specifying excluded HV channels
         @param  eor_status:        Strings specifying status at the end of the run, 'OK'
+        @param additional_attributes: dict of additonal attributes
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:         If detector_id does not exist.
         """
@@ -880,38 +885,27 @@ class MongoToCDBAPIAdapter(APIInterface):
             )
         if runtype:
             self.__add_attributes_to_run(
-                run_id,
-                name="runtype",
-                attribute_type="str",
-                values=runtype,
+                run_id, name="runtype", attribute_type="str", values=runtype
             )
         if beam_status:
             self.__add_attributes_to_run(
-                run_id,
-                name="beam_status",
-                attribute_type="str",
-                values=beam_status,
+                run_id, name="beam_status", attribute_type="str", values=beam_status
             )
         if status:
             self.__add_attributes_to_run(
-                run_id,
-                name="status",
-                attribute_type="str",
-                values=status,
+                run_id, name="status", attribute_type="str", values=status
             )
         if HV:
             self.__add_attributes_to_run(
-                run_id,
-                name="HV",
-                attribute_type="str",
-                values=HV,
+                run_id, name="HV", attribute_type="str", values=HV
             )
         if eor_status:
             self.__add_attributes_to_run(
-                run_id,
-                name="eor_status",
-                attribute_type="str",
-                values=eor_status,
+                run_id, name="eor_status", attribute_type="str", values=eor_status
+            )
+        for attribute, value in additional_attributes.items():
+            self.__add_attributes_to_run(
+                run_id, name=attribute, attribute_type="str", values=value
             )
 
     def __get_file(self, file_id):
