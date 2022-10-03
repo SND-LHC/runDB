@@ -14,12 +14,9 @@
 
 ``` ssh-config
 Host sndtun
-  Hostname lxplus.cern.ch
+  Hostname lxtunnel.cern.ch
   User your_lxplus_userid
   LocalForward 27017 sndrundb.cern.ch:27017
-Host sndrundb
-  Hostname localhost
-  Port 27017
 ```
 
 4. Edit the file conditionsDatabase/config.yml:
@@ -34,7 +31,7 @@ mongo:
   user: "sndatlhc"
 ```
 
-5. Start the tunnel with the command: `ssh -N -f -q sndtun`
+5. Start the tunnel with the command: `ssh -N -f -q sndtun` or `ssh -L 27017:sndrundb.cern.ch:27017 lxtunnel -N`
 
 6. It might be necessary to install kinit and do a `kinit userid@lxplus.cern.ch` before starting the tunnel.
 
