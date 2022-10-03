@@ -30,7 +30,8 @@ from databases.mongodb.helpers import (
     create_uri,
 )
 
-# from databases.mongodb.models.emulsion import Emulsion
+# from databases.mongodb.models.target_configuration import TargetConfiguration
+
 # from databases.mongodb.models.brick import Brick
 
 from interface import APIInterface
@@ -1143,55 +1144,53 @@ class MongoToCDBAPIAdapter(APIInterface):
             )
         if size:
             self.__add_attributes_to_file(
-                file_id,
-                name="size",
-                attribute_type="int",
-                values=size,
+                file_id, name="size", attribute_type="int", values=size
             )
         if DQ:
             self.__add_attributes_to_file(
-                file_id,
-                name="DQ",
-                attribute_type="str",
-                values=DQ,
+                file_id, name="DQ", attribute_type="str", values=DQ
             )
 
-    def get_emulsion(self, emulsion_id):
-        """Return an emulsion dictionary.
+    def get_target_configuration(self, target_configuration_id):
+        """Return a target configuration dictionary.
 
-        @param  emulsion_id:    String identifying the emulsion to retrieve
+        @param  target_configuration_id:    String identifying the target configuration to retrieve
         @throw  TypeError:      If input type is not as specified.
-        @throw  ValueError:     If emulsion_id does not exist.
+        @throw  ValueError:     If target_configuration_id does not exist.
         @retval Dict:           A dictionary adhering to the following specification:
-                                File = { 'Emulsion_id': String, 'Start_time': datetime, 'End_time': datetime,
+                                File = { 'TargetConfiguration_id': String, 'Start_time': datetime, 'End_time': datetime,
                                              'Attributes': List of Attributes }
         """
-        if emulsion_id == "":
+        if target_configuration_id == "":
             raise ValueError(
-                "Please specify a valid emulsion number. An emulsion number cannot be empty."
+                "Please specify a valid target configuration ID. A target configuration ID cannot be empty."
             )
 
-        if not validate_str(emulsion_id):
+        if not validate_str(target_configuration_id):
             raise TypeError(
-                "Please pass the correct type of input: emulsion_id should be String"
+                "Please pass the correct type of input: target_configuration_id should be String"
             )
 
-        emulsion_id = sanitize_str(emulsion_id)
+        target_configuration_id = sanitize_str(target_configuration_id)
 
         try:
-            emulsion = self.__get_file(emulsion_id)
+            target_configuration = self.__get_file(target_configuration_id)
         except ValueError as e:
             raise ValueError(
-                "The requested emulsion" + emulsion_id + " does not exist."
+                "The requested target_configuration "
+                + target_configuration_id
+                + " does not exist."
             ) from e
 
-        # Convert the internal Emulsion object to a generic Python dict type
-        return loads(emulsion.to_json())
+        # Convert the internal TargetConfiguration object to a generic Python dict type
+        return loads(target_configuration.to_json())
 
-    def add_emulsion(self, emulsion_id, start_time=None, end_time=None):
-        """Add a new emulsion to the database.
+    def add_target_configuration(
+        self, target_configuration_id, start_time=None, end_time=None
+    ):
+        """Add a new target configuration to the database.
 
-        @param  emulsion_id:     String specifying the emulsion_id. Must
+        @param  target_configuration_id:     String specifying the target_configuration_id. Must
                             be unique. Must not contain a forward slash (i.e. /).
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
@@ -1202,16 +1201,16 @@ class MongoToCDBAPIAdapter(APIInterface):
         @throw  ValueError:
         """
 
-    def remove_emulsion(self, emulsion_id):
-        """Remove an emulsion from the database.
+    def remove_target_configuration(self, target_configuration_id):
+        """Remove a target configuration from the database.
 
-        @param  emulsion_id:    String identifying the emulsion to remove
+        @param  target_configuration_id:    String identifying the target_configuration to remove
         @throw  TypeError:      If input type is not as specified.
-        @throw  ValueError:     If emulsion_id does not exist.
+        @throw  ValueError:     If target_configuration_id does not exist.
         """
 
-    def list_emulsions(self, start_time=None, end_time=None):
-        """Return a list of all the emulsions in the database.
+    def list_target_configurations(self, start_time=None, end_time=None):
+        """Return a list of all the target configurations in the database.
 
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
@@ -1220,13 +1219,15 @@ class MongoToCDBAPIAdapter(APIInterface):
                                 Can be of type String or datetime
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:
-        @retval List:           A list with (string) emulsions
+        @retval List:           A list with (string) target_configurations
         """
 
-    def add_attributes_to_emulsion(self, emulsion_id, target_configuration=None):
-        """Add attributes to a emulsion.
+    def add_attributes_to_target_configuration(
+        self, target_configuration_id, target_configuration=None
+    ):
+        """Add attributes to a target_configuration.
 
-        @param  emulsion_id:          String identifying the emulsion
+        @param  target_configuration_id:          String identifying the target_configuration
         @param  target_configuration: String specifying the target configuration
         @throw TypeError:          If input type is not as specified.
         @throw ValueError:
@@ -1264,12 +1265,14 @@ class MongoToCDBAPIAdapter(APIInterface):
         # Convert the internal Brick object to a generic Python dict type
         return loads(brick.to_json())
 
-    def add_brick(self, brick_id, emulsion_id, start_time=None, end_time=None):
+    def add_brick(
+        self, brick_id, target_configuration_id, start_time=None, end_time=None
+    ):
         """Add a new brick to the database.
 
-        @param  brick_id:       String specifying the emulsion_id. Must
+        @param  brick_id:       String specifying the target_configuration_id. Must
                                 be unique. Must not contain a forward slash (i.e. /).
-        @param  emulsion_id:    String specifying the emulsion_id. Must exist in the database.
+        @param  target_configuration_id:    String specifying the target_configuration_id. Must exist in the database.
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
         @param  end_time:       (optional) Timestamp specifying the end of a date/time range
@@ -1282,13 +1285,13 @@ class MongoToCDBAPIAdapter(APIInterface):
     def remove_brick(self, brick_id):
         """Remove a brick from the database.
 
-        @param  brick_id:    String identifying the emulsion to remove
+        @param  brick_id:    String identifying the target_configuration to remove
         @throw  TypeError:      If input type is not as specified.
-        @throw  ValueError:     If emulsion_id does not exist.
+        @throw  ValueError:     If target_configuration_id does not exist.
         """
 
-    def list_bricks(self, emulsion_id=None, start_time=None, end_time=None):
-        """Return a list of all the bricks in the database emulsion.
+    def list_bricks(self, target_configuration_id=None, start_time=None, end_time=None):
+        """Return a list of all the bricks in the database target_configuration.
 
         @param  start_time:     Timestamp specifying a start of a date/time range
                                 Can be of type String or datetime.
@@ -1303,7 +1306,6 @@ class MongoToCDBAPIAdapter(APIInterface):
     def add_attributes_to_brick(
         self,
         brick_id,
-        emulsion_id=None,
         producer_id=None,
         batch_id=None,
         production_date=None,
@@ -1311,25 +1313,29 @@ class MongoToCDBAPIAdapter(APIInterface):
     ):
         """Add attributes to a brick.
 
-        @param  emulsion_id:          String identifying the emulsion
         @param  brick_id:             String specifying the brick
         @param  producer_id:          String specifying the producer
         @param  batch_id:             String specifying the batch id
         @param  production_date:      Timestamp specifying production date and time
         @param  scanning_lab:         String specifying the scanning lab
         @throw TypeError:             If input type is not as specified.
-        @throw ValueError:            If emulsion_id does not exist.
+        @throw ValueError:            If target_configuration_id does not exist.
         """
 
     def get_attributes(
-        self, fill_id=None, run_id=None, file_id=None, emulsion_id=None, brick_id=None
+        self,
+        fill_id=None,
+        run_id=None,
+        file_id=None,
+        target_configuration_id=None,
+        brick_id=None,
     ):
         """Return a list with all attributes dictionaries associated with an object.
 
         @param  fill_id:        String identifying the fill
         @param  run_id:         String identifying the run
         @param  file_id:        String identifying the file
-        @param  emulsion_id:    String identifying the emulsion
+        @param  target_configuration_id:    String identifying the target_configuration
         @param  brick_id:       String identifying the brick
         @throw  TypeError:      If input type is not as specified.
         @throw  ValueError:     If detector_id does not exist.
@@ -1343,7 +1349,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         fill_id=None,
         run_id=None,
         file_id=None,
-        emulsion_id=None,
+        target_configuration_id=None,
         brick_id=None,
         attributes=None,
     ):
@@ -1352,7 +1358,7 @@ class MongoToCDBAPIAdapter(APIInterface):
         @param  fill_id:        String identifying the fill
         @param  run_id:         String identifying the run
         @param  file_id:        String identifying the file
-        @param  emulsion_id:    String identifying the emulsion
+        @param  target_configuration_id:    String identifying the target_configuration
         @param  brick_id:       String identifying the brick
         @param  attributes      A list with attributes dictionaries adhering to the following
                                 specification:
